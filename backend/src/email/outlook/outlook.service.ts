@@ -9,6 +9,32 @@ export class OutlookService {
     private configService: ConfigService,
   ) {}
 
+  private get tenantEndpoint(): string {
+    const tenantId = this.configService.get<string>('OUTLOOK_TENANT_ID') || 'common';
+    return `https://login.microsoftonline.com/${tenantId}`;
+  }
+
+  getAuthUrl(userId: string): string {
+    const clientId = this.configService.get<string>('OUTLOOK_CLIENT_ID');
+    const redirectUri = this.configService.get<string>('OUTLOOK_REDIRECT_URI');
+
+    if (!clientId || !redirectUri) {
+      throw new BadRequestException(
+        'Outlook integration not configured. Set OUTLOOK_CLIENT_ID and OUTLOOK_REDIRECT_URI in environment variables.',
+      );
+    }
+
+    const params = new URLSearchParams({
+      client_id: clientId,
+      response_type: 'code',
+      redirect_uri: redirectUri,
+      scope: 'User.Read Mail.ReadWrite Mail.Send offline_access',
+      state: userId,
+    });
+
+    return `${this.tenantEndpoint}/oauth2/v2.0/authorize?${params.toString()}`;
+  }
+
   async connect(userId: string, authCode: string) {
     const clientId = this.configService.get<string>('OUTLOOK_CLIENT_ID');
     const clientSecret = this.configService.get<string>('OUTLOOK_CLIENT_SECRET');
@@ -18,7 +44,7 @@ export class OutlookService {
       throw new BadRequestException('Outlook integration not configured');
     }
 
-    const tokenEndpoint = 'https://login.microsoftonline.com/common/oauth2/v2.0/token';
+    const tokenEndpoint = `${this.tenantEndpoint}/oauth2/v2.0/token`;
     const params = new URLSearchParams();
     params.append('client_id', clientId || '');
     params.append('client_secret', clientSecret || '');
@@ -93,7 +119,8 @@ export class OutlookService {
       .maybeSingle();
 
     if (error) throw error;
-    return data || { connected: false };
+    if (!data) return { connected: false };
+    return { connected: data.is_active, outlook_email: data.outlook_email, email: data.outlook_email };
   }
 
   async refreshToken(userId: string) {
@@ -116,7 +143,7 @@ export class OutlookService {
     params.append('grant_type', 'refresh_token');
     params.append('scope', 'User.Read Mail.ReadWrite Mail.Send offline_access');
 
-    const response = await fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
+    const response = await fetch(`${this.tenantEndpoint}/oauth2/v2.0/token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: params.toString(),

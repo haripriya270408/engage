@@ -45,6 +45,7 @@ const STATUS_COLORS: Record<string, string> = {
 export default function ReportsPage() {
   const { user } = useAuth();
   const isManager = user?.role === 'MANAGER';
+  const canSeeRepPerformance = user?.role === 'ADMIN' || user?.role === 'MANAGER';
 
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -86,7 +87,7 @@ export default function ReportsPage() {
         toast.error('Failed to load report data');
       }
 
-      if (isManager) {
+      if (canSeeRepPerformance) {
         try {
           const { data } = await api.get('/reports/rep-performance', { params });
           setRepPerformance(data);
@@ -97,12 +98,12 @@ export default function ReportsPage() {
 
       setLoadingSummary(false);
       setLoadingEmail(false);
-      if (isManager) setLoadingReps(false);
+      if (canSeeRepPerformance) setLoadingReps(false);
       setLoadingActivity(false);
     };
 
     load();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [startDate, endDate, activityFilter, isManager]);
 
   const maxStatusValue = taskSummary
     ? Math.max(...Object.values(taskSummary.byStatus), 1)
@@ -213,7 +214,7 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {isManager && (
+      {canSeeRepPerformance && (
         <div className="mb-6 rounded-xl border border-border bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-medium text-foreground">Rep Performance</h2>
           {loadingReps ? (

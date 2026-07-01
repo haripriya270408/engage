@@ -5,7 +5,7 @@ import { SupabaseService } from '../supabase/supabase.service';
 export class AdminService {
   constructor(private supabaseService: SupabaseService) {}
 
-  async approveUser(userId: string, approvedById: string) {
+  async approveUser(userId: string, approvedById: string, managerId?: string) {
     const supabase = this.supabaseService.getClient();
 
     const { data: user, error: findError } = await supabase
@@ -36,6 +36,16 @@ export class AdminService {
       .single();
 
     if (error) throw error;
+
+    if (managerId && user.role === 'REP') {
+      await supabase
+        .from('manager_rep_assignments')
+        .upsert(
+          { manager_id: managerId, rep_id: userId },
+          { onConflict: 'manager_id,rep_id' },
+        );
+    }
+
     return data;
   }
 
@@ -81,13 +91,14 @@ export class AdminService {
   async getDashboardStats() {
     const supabase = this.supabaseService.getClient();
 
-    const [totalUsers, totalManagers, totalReps, pendingApprovals, totalTasks, pendingUsersData] = await Promise.all([
+    const [totalUsers, totalManagers, totalReps, pendingApprovals, totalTasks, pendingUsersData, managersData] = await Promise.all([
       supabase.from('users').select('*', { count: 'exact', head: true }),
       supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'MANAGER').eq('status', 'ACTIVE'),
       supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'REP').eq('status', 'ACTIVE'),
       supabase.from('users').select('*', { count: 'exact', head: true }).eq('is_approved', false).neq('role', 'ADMIN'),
       supabase.from('tasks').select('*', { count: 'exact', head: true }),
       supabase.from('users').select('id, email, first_name, last_name, role, created_at').eq('is_approved', false).neq('role', 'ADMIN').order('created_at', { ascending: true }),
+      supabase.from('users').select('id, email, first_name, last_name').eq('role', 'MANAGER').eq('status', 'ACTIVE').order('first_name', { ascending: true }),
     ]);
 
     return {
@@ -97,6 +108,7 @@ export class AdminService {
       pending_approvals: pendingApprovals.count || 0,
       total_tasks: totalTasks.count || 0,
       pending_users: pendingUsersData.data || [],
+      managers: managersData.data || [],
     };
   }
 }

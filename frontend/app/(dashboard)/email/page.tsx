@@ -33,6 +33,8 @@ export default function EmailPage() {
   const [outlookStatus, setOutlookStatus] = useState<{ connected: boolean; email?: string } | null>(null);
   const [checkingStatus, setCheckingStatus] = useState(false);
 
+  const [fromEmail, setFromEmail] = useState('');
+
   const [showAiModal, setShowAiModal] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiTone, setAiTone] = useState('professional');
@@ -55,8 +57,8 @@ export default function EmailPage() {
       setCc('');
       setBody('');
     } catch (err: unknown) {
-      const errResp = err as { response?: { data?: { message?: string } } };
-      const msg = errResp.response?.data?.message || '';
+      const errResp = err as { response?: { data?: { message?: unknown } } };
+      const msg = String(errResp.response?.data?.message || '');
       if (msg.toLowerCase().includes('outlook') || msg.toLowerCase().includes('connect')) {
         toast.error('Outlook not connected. Please connect Outlook in Settings first.');
       } else {
@@ -120,6 +122,7 @@ export default function EmailPage() {
     try {
       const { data } = await api.get('/email/outlook/status');
       setOutlookStatus(data);
+      if (data?.outlook_email) setFromEmail(data.outlook_email);
     } catch {
       setOutlookStatus(null);
     } finally {
@@ -129,11 +132,10 @@ export default function EmailPage() {
 
   const handleConnectOutlook = async () => {
     try {
-      const { data } = await api.post('/email/outlook/connect');
+      const { data } = await api.get('/email/outlook/auth-url');
       if (data.url) {
-        window.open(data.url, '_blank');
+        window.location.href = data.url;
       }
-      toast.success('Follow the OAuth instructions to connect Outlook');
     } catch {
       toast.error('Failed to initiate Outlook connection');
     }
@@ -196,6 +198,15 @@ export default function EmailPage() {
 
       {activeTab === 'Compose' && (
         <div className="space-y-4 rounded-xl border border-border bg-white p-6 shadow-sm">
+          <div>
+            <label className="block text-sm font-medium text-foreground">From</label>
+            <input
+              type="text"
+              value={fromEmail || 'Connect Outlook in Settings to see your email'}
+              readOnly
+              className="mt-1 block w-full rounded-lg border border-border bg-gray-50 px-3 py-2 text-sm text-muted outline-none"
+            />
+          </div>
           <div>
             <label className="block text-sm font-medium text-foreground">To</label>
             <input

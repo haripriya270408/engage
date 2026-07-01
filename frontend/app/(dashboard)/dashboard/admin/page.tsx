@@ -6,6 +6,13 @@ import { useAuth } from '@/lib/auth-context';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
 
+interface Manager {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+}
+
 interface DashboardData {
   total_users: number;
   total_managers: number;
@@ -13,6 +20,7 @@ interface DashboardData {
   pending_approvals: number;
   total_tasks: number;
   pending_users: PendingUser[];
+  managers: Manager[];
 }
 
 interface PendingUser {
@@ -30,6 +38,7 @@ export default function AdminDashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [pageLoading, setPageLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [managerSelections, setManagerSelections] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!loading && !user) {
@@ -57,10 +66,14 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleApprove = async (userId: string) => {
+  const handleApprove = async (userId: string, role: string) => {
     setActionLoading(userId);
     try {
-      await api.post('/admin/approve-user', { user_id: userId });
+      const body: any = { user_id: userId };
+      if (role === 'REP' && managerSelections[userId]) {
+        body.manager_id = managerSelections[userId];
+      }
+      await api.post('/admin/approve-user', body);
       toast.success('User approved');
       fetchDashboard();
     } catch (err: any) {
@@ -115,6 +128,7 @@ export default function AdminDashboard() {
                   <th className="px-6 py-3 font-medium">Name</th>
                   <th className="px-6 py-3 font-medium">Email</th>
                   <th className="px-6 py-3 font-medium">Role</th>
+                  <th className="px-6 py-3 font-medium">Assign Manager</th>
                   <th className="px-6 py-3 font-medium">Registered</th>
                   <th className="px-6 py-3 font-medium">Actions</th>
                 </tr>
@@ -129,13 +143,29 @@ export default function AdminDashboard() {
                         {pu.role}
                       </span>
                     </td>
+                    <td className="px-6 py-4">
+                      {pu.role === 'REP' ? (
+                        <select
+                          value={managerSelections[pu.id] || ''}
+                          onChange={(e) => setManagerSelections(prev => ({ ...prev, [pu.id]: e.target.value }))}
+                          className="rounded-lg border border-border px-2 py-1.5 text-xs outline-none focus:border-primary w-40"
+                        >
+                          <option value="">No manager</option>
+                          {(data.managers || []).map((m) => (
+                            <option key={m.id} value={m.id}>{m.first_name} {m.last_name}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <span className="text-xs text-muted">—</span>
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-muted text-xs">
                       {new Date(pu.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => handleApprove(pu.id)}
+                          onClick={() => handleApprove(pu.id, pu.role)}
                           disabled={actionLoading === pu.id}
                           className="px-3 py-1.5 text-xs font-medium rounded-lg bg-success text-white hover:bg-green-700 transition-colors disabled:opacity-50"
                         >

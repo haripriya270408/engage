@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
+import { useAuth } from '@/lib/auth-context';
 
 const TASK_TYPES = ['EMAIL', 'CALL', 'LINKEDIN', 'MEETING', 'FOLLOW_UP', 'OTHER'] as const;
 const STATUSES = ['PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'] as const;
@@ -55,6 +56,7 @@ const typeColors: Record<TaskType, string> = {
 };
 
 export default function TasksPage() {
+  const { user } = useAuth();
   const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [pagination, setPagination] = useState<Pagination>({ total: 0, page: 1, limit: 10, totalPages: 0 });
@@ -212,12 +214,14 @@ export default function TasksPage() {
                     >
                       Edit
                     </button>
-                    <button
-                      onClick={() => handleDelete(task.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      Delete
-                    </button>
+                    {user?.role !== 'REP' && (
+                      <button
+                        onClick={() => handleDelete(task.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

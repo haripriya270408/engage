@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
+import { useAuth } from '@/lib/auth-context';
 
 const TASK_TYPES = ['EMAIL', 'CALL', 'LINKEDIN', 'MEETING', 'FOLLOW_UP', 'OTHER'] as const;
 const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'] as const;
@@ -18,6 +19,7 @@ interface User {
 
 export default function CreateTaskPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [usersLoading, setUsersLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -45,16 +47,21 @@ export default function CreateTaskPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const { data } = await api.get('/users/reps');
-        setUsers(data.users || data.data || []);
+        if (user?.role === 'MANAGER') {
+          const { data } = await api.get('/teams/my-team');
+          setUsers(data.reps || []);
+        } else {
+          const { data } = await api.get('/users/reps');
+          setUsers(data.users || data.data || []);
+        }
       } catch {
         setUseTextInput(true);
       } finally {
         setUsersLoading(false);
       }
     };
-    fetchUsers();
-  }, []);
+    if (user) fetchUsers();
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;

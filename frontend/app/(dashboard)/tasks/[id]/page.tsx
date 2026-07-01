@@ -5,6 +5,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
+import { useAuth } from '@/lib/auth-context';
 
 const TASK_TYPES = ['EMAIL', 'CALL', 'LINKEDIN', 'MEETING', 'FOLLOW_UP', 'OTHER'] as const;
 const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'] as const;
@@ -76,6 +77,8 @@ export default function TaskDetailPage() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+
+  const { user } = useAuth();
 
   const [editing, setEditing] = useState(searchParams.get('edit') === 'true');
   const [editForm, setEditForm] = useState({
@@ -384,7 +387,7 @@ export default function TaskDetailPage() {
                 Mark Complete
               </button>
             )}
-            {task.status !== 'CANCELLED' && (
+            {task.status !== 'CANCELLED' && user?.role !== 'REP' && (
               <button onClick={() => handleStatusChange('CANCELLED')} disabled={updating}
                 className="rounded-md border border-red-300 px-3 py-1.5 text-sm text-red-700 hover:bg-red-50 disabled:opacity-50">
                 Cancel Task

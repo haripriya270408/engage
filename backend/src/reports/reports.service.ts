@@ -5,19 +5,22 @@ import { SupabaseService } from '../supabase/supabase.service';
 export class ReportsService {
   constructor(private supabaseService: SupabaseService) {}
 
-  async getTaskSummary(dateFrom?: string, dateTo?: string, managerId?: string) {
+  async getTaskSummary(userId: string, userRole: string, startDate?: string, endDate?: string) {
     const supabase = this.supabaseService.getClient();
     let query = supabase.from('tasks').select('*');
 
-    if (dateFrom) query = query.gte('created_at', dateFrom);
-    if (dateTo) query = query.lte('created_at', dateTo);
+    if (startDate) query = query.gte('created_at', startDate);
+    if (endDate) query = query.lte('created_at', endDate);
 
-    if (managerId) {
+    if (userRole === 'REP') {
+      query = query.eq('assigned_to', userId);
+    } else if (userRole === 'MANAGER') {
       const { data: assignments } = await supabase
         .from('manager_rep_assignments')
         .select('rep_id')
-        .eq('manager_id', managerId);
+        .eq('manager_id', userId);
       const repIds = (assignments || []).map(a => a.rep_id);
+      repIds.push(userId);
       query = query.in('assigned_to', repIds);
     }
 
@@ -43,15 +46,24 @@ export class ReportsService {
     return { total, byStatus, byType };
   }
 
-  async getRepPerformance(managerId: string, dateFrom?: string, dateTo?: string) {
+  async getRepPerformance(userId: string, userRole: string, startDate?: string, endDate?: string) {
     const supabase = this.supabaseService.getClient();
 
-    const { data: assignments } = await supabase
-      .from('manager_rep_assignments')
-      .select('rep_id')
-      .eq('manager_id', managerId);
+    let repIds: string[];
 
-    const repIds = (assignments || []).map(a => a.rep_id);
+    if (userRole === 'ADMIN') {
+      const { data: allUsers } = await supabase
+        .from('users')
+        .select('id')
+        .eq('role', 'REP');
+      repIds = (allUsers || []).map(u => u.id);
+    } else {
+      const { data: assignments } = await supabase
+        .from('manager_rep_assignments')
+        .select('rep_id')
+        .eq('manager_id', userId);
+      repIds = (assignments || []).map(a => a.rep_id);
+    }
 
     if (repIds.length === 0) return [];
 
@@ -61,19 +73,20 @@ export class ReportsService {
       .in('id', repIds);
 
     let taskQuery = supabase.from('tasks').select('*').in('assigned_to', repIds);
-    if (dateFrom) taskQuery = taskQuery.gte('created_at', dateFrom);
-    if (dateTo) taskQuery = taskQuery.lte('created_at', dateTo);
+    if (startDate) taskQuery = taskQuery.gte('created_at', startDate);
+    if (endDate) taskQuery = taskQuery.lte('created_at', endDate);
 
     const { data: tasks } = await taskQuery;
 
     const performance = (users || []).map(user => {
       const userTasks = (tasks || []).filter(t => t.assigned_to === user.id);
       return {
-        user,
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
         total_tasks: userTasks.length,
         completed: userTasks.filter(t => t.status === 'COMPLETED').length,
-        in_progress: userTasks.filter(t => t.status === 'IN_PROGRESS').length,
-        pending: userTasks.filter(t => t.status === 'PENDING').length,
         completion_rate: userTasks.length > 0
           ? Math.round((userTasks.filter(t => t.status === 'COMPLETED').length / userTasks.length) * 100)
           : 0,
@@ -83,30 +96,51 @@ export class ReportsService {
     return performance;
   }
 
-  async getUserActivity(userId: string, dateFrom?: string, dateTo?: string) {
+  async getUserActivity(userId: string, userRole: string, startDate?: string, endDate?: string, activityType?: string) {
     const supabase = this.supabaseService.getClient();
     let query = supabase
       .from('task_activities')
-      .select('*, tasks!task_activities_task_id_fkey(title, task_type)')
-      .eq('user_id', userId);
+      .select('*, users!task_activities_user_id_fkey(id, email, first_name, last_name)');
 
-    if (dateFrom) query = query.gte('created_at', dateFrom);
-    if (dateTo) query = query.lte('created_at', dateTo);
+    if (userRole === 'REP') {
+      query = query.eq('user_id', userId);
+    } else if (userRole === 'MANAGER') {
+      const { data: assignments } = await supabase
+        .from('manager_rep_assignments')
+        .select('rep_id')
+        .eq('manager_id', userId);
+      const repIds = (assignments || []).map(a => a.rep_id);
+      repIds.push(userId);
+      query = query.in('user_id', repIds);
+    }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+    if (startDate) query = query.gte('created_at', startDate);
+    if (endDate) query = query.lte('created_at', endDate);
+    if (activityType) query = query.eq('activity_type', activityType);
+
+    const { data, error } = await query.order('created_at', { ascending: false }).limit(50);
     if (error) throw error;
-    return data || [];
+
+    const activities = (data || []).map((a: any) => ({
+      id: a.id,
+      user_name: a.users ? `${a.users.first_name} ${a.users.last_name}` : 'Unknown',
+      activity_type: a.activity_type,
+      description: a.description || '',
+      created_at: a.created_at,
+    }));
+
+    return activities;
   }
 
-  async getEmailStats(userId: string, dateFrom?: string, dateTo?: string) {
+  async getEmailStats(userId: string, startDate?: string, endDate?: string) {
     const supabase = this.supabaseService.getClient();
     let query = supabase
       .from('email_logs')
       .select('*')
       .eq('user_id', userId);
 
-    if (dateFrom) query = query.gte('sent_at', dateFrom);
-    if (dateTo) query = query.lte('sent_at', dateTo);
+    if (startDate) query = query.gte('sent_at', startDate);
+    if (endDate) query = query.lte('sent_at', endDate);
 
     const { data, error } = await query;
     if (error) throw error;

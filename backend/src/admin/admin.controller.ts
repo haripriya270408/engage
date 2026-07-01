@@ -14,7 +14,7 @@ export class AdminController {
 
   @Post('approve-user')
   async approveUser(@Body() dto: ApproveUserDto, @CurrentUser() user: { sub: string }) {
-    return this.adminService.approveUser(dto.user_id, user.sub);
+    return this.adminService.approveUser(dto.user_id, user.sub, dto.manager_id);
   }
 
   @Post('reject-user')

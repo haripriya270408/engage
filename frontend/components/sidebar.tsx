@@ -15,10 +15,7 @@ const navItems: Record<string, NavItem[]> = {
     { label: 'Dashboard', href: '/dashboard/admin' },
     { label: 'Users', href: '/users' },
     { label: 'Teams', href: '/teams' },
-    { label: 'Tasks', href: '/tasks' },
     { label: 'Reports', href: '/reports' },
-    { label: 'Email', href: '/email' },
-    { label: 'Notifications', href: '/notifications' },
     { label: 'Profile', href: '/profile' },
   ],
   MANAGER: [

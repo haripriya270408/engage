@@ -122,11 +122,18 @@ export class TeamsService {
     const completedTasks = tasks?.filter(t => t.status === 'COMPLETED').length || 0;
     const pendingTasks = tasks?.filter(t => t.status === 'PENDING' || t.status === 'IN_PROGRESS').length || 0;
 
+    const activeRepsRes = await supabase
+      .from('users')
+      .select('id', { count: 'exact', head: true })
+      .in('id', repIds)
+      .eq('status', 'ACTIVE');
+    const active_reps = activeRepsRes.count || 0;
+    const completion_rate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
     return {
-      total_reps: repIds.length,
-      total_tasks: totalTasks,
-      completed_tasks: completedTasks,
-      pending_tasks: pendingTasks,
+      team_size: repIds.length,
+      active_reps,
+      completion_rate,
     };
   }
 }

@@ -6,46 +6,46 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @Controller('reports')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard)
 export class ReportsController {
   constructor(private reportsService: ReportsService) {}
 
   @Get('task-summary')
-  @Roles('ADMIN', 'MANAGER')
   async getTaskSummary(
-    @Query('date_from') dateFrom?: string,
-    @Query('date_to') dateTo?: string,
-    @Query('manager_id') managerId?: string,
+    @CurrentUser() user: { sub: string; role: string },
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
   ) {
-    return this.reportsService.getTaskSummary(dateFrom, dateTo, managerId);
+    return this.reportsService.getTaskSummary(user.sub, user.role, startDate, endDate);
   }
 
   @Get('rep-performance')
-  @Roles('MANAGER')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'MANAGER')
   async getRepPerformance(
-    @CurrentUser() user: { sub: string },
-    @Query('date_from') dateFrom?: string,
-    @Query('date_to') dateTo?: string,
+    @CurrentUser() user: { sub: string; role: string },
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
   ) {
-    return this.reportsService.getRepPerformance(user.sub, dateFrom, dateTo);
+    return this.reportsService.getRepPerformance(user.sub, user.role, startDate, endDate);
   }
 
   @Get('user-activity')
-  @Roles('ADMIN', 'MANAGER')
   async getUserActivity(
-    @Query('user_id') userId: string,
-    @Query('date_from') dateFrom?: string,
-    @Query('date_to') dateTo?: string,
+    @CurrentUser() user: { sub: string; role: string },
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+    @Query('activity_type') activityType?: string,
   ) {
-    return this.reportsService.getUserActivity(userId, dateFrom, dateTo);
+    return this.reportsService.getUserActivity(user.sub, user.role, startDate, endDate, activityType);
   }
 
   @Get('email-stats')
   async getEmailStats(
     @CurrentUser() user: { sub: string },
-    @Query('date_from') dateFrom?: string,
-    @Query('date_to') dateTo?: string,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
   ) {
-    return this.reportsService.getEmailStats(user.sub, dateFrom, dateTo);
+    return this.reportsService.getEmailStats(user.sub, startDate, endDate);
   }
 }

@@ -67,8 +67,10 @@ export class TasksService {
 
     if (error) throw error;
 
+    const enriched = await this.enrichTasks(data || []);
+
     return {
-      data: data || [],
+      data: enriched,
       total: count || 0,
       page,
       limit,
@@ -85,7 +87,8 @@ export class TasksService {
       .single();
 
     if (error || !data) throw new NotFoundException('Task not found');
-    return data;
+    const enriched = await this.enrichTasks([data]);
+    return enriched[0];
   }
 
   async update(id: string, dto: UpdateTaskDto, userId: string) {
@@ -173,11 +176,40 @@ export class TasksService {
 
   async getDashboardStats(userId: string, userRole: string) {
     const supabase = this.supabaseService.getClient();
-    let query = supabase.from('tasks').select('status', { count: 'exact' });
 
     if (userRole === 'REP') {
-      query = query.eq('assigned_to', userId);
-    } else if (userRole === 'MANAGER') {
+      let builder = supabase.from('tasks').select('*').eq('assigned_to', userId);
+
+      const { data: tasks } = await builder;
+      const allTasks = tasks || [];
+      const total = allTasks.length;
+      const completed = allTasks.filter(t => t.status === 'COMPLETED').length;
+      const pending = allTasks.filter(t => t.status === 'PENDING').length;
+      const inProgress = allTasks.filter(t => t.status === 'IN_PROGRESS').length;
+      const now = new Date();
+
+      const openTasks = allTasks.filter(t => t.status !== 'COMPLETED' && t.status !== 'CANCELLED');
+      const upcoming = openTasks.filter(t => t.due_date && new Date(t.due_date) > now);
+      const overdue_tasks = openTasks.filter(t => t.due_date && new Date(t.due_date) <= now);
+
+      const enrichedUpcoming = await this.enrichTasks(upcoming);
+      const enrichedOverdue = await this.enrichTasks(overdue_tasks);
+
+      return {
+        total,
+        completed,
+        pending,
+        inProgress,
+        overdue: overdue_tasks.length,
+        upcoming: enrichedUpcoming,
+        overdue_tasks: enrichedOverdue,
+      };
+    }
+
+    // MANAGER and ADMIN dashboard
+    let query = supabase.from('tasks').select('*');
+
+    if (userRole === 'MANAGER') {
       const { data: assignments } = await supabase
         .from('manager_rep_assignments')
         .select('rep_id')
@@ -188,12 +220,51 @@ export class TasksService {
     }
 
     const { data: tasks } = await query;
-    const total = tasks?.length || 0;
-    const completed = tasks?.filter(t => t.status === 'COMPLETED').length || 0;
-    const pending = tasks?.filter(t => t.status === 'PENDING').length || 0;
-    const inProgress = tasks?.filter(t => t.status === 'IN_PROGRESS').length || 0;
+    const allTasks = tasks || [];
+    const total = allTasks.length;
+    const completed = allTasks.filter(t => t.status === 'COMPLETED').length;
+    const pending = allTasks.filter(t => t.status === 'PENDING').length;
+    const inProgress = allTasks.filter(t => t.status === 'IN_PROGRESS').length;
+    const cancelled = allTasks.filter(t => t.status === 'CANCELLED').length;
+    const now = new Date();
+    const overdue = allTasks.filter(t =>
+      t.due_date && new Date(t.due_date) <= now &&
+      t.status !== 'COMPLETED' && t.status !== 'CANCELLED'
+    ).length;
 
-    return { total, completed, pending, inProgress };
+    const recent_tasks = await this.enrichTasks(
+      allTasks.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5)
+    );
+
+    return { total, completed, pending, in_progress: inProgress, overdue, recent_tasks };
+  }
+
+  private async enrichTasks(tasks: any[]) {
+    if (!tasks || tasks.length === 0) return tasks;
+
+    const supabase = this.supabaseService.getClient();
+    const userIds = new Set<string>();
+    for (const task of tasks) {
+      if (task.assigned_to) userIds.add(task.assigned_to);
+      if (task.assigned_by) userIds.add(task.assigned_by);
+      if (task.created_by) userIds.add(task.created_by);
+    }
+
+    if (userIds.size === 0) return tasks;
+
+    const { data: users } = await supabase
+      .from('users')
+      .select('id, first_name, last_name, email')
+      .in('id', [...userIds]);
+
+    const userMap = new Map((users || []).map(u => [u.id, u]));
+
+    return tasks.map(task => ({
+      ...task,
+      assigned_to: task.assigned_to ? userMap.get(task.assigned_to) || task.assigned_to : null,
+      assigned_by: task.assigned_by ? userMap.get(task.assigned_by) || task.assigned_by : null,
+      created_by: task.created_by ? userMap.get(task.created_by) || task.created_by : null,
+    }));
   }
 
   private async logActivity(
