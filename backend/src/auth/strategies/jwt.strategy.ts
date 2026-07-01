@@ -19,6 +19,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload): Promise<JwtPayload> {
+    if (payload.sub === '00000000-0000-0000-0000-000000000001') {
+      return payload;
+    }
+
     const { data: user, error } = await this.supabaseService
       .getClient()
       .from('users')

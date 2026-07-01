@@ -39,11 +39,11 @@ export default function UsersPage() {
         if (roleFilter) params.role = roleFilter;
         if (statusFilter) params.status = statusFilter;
         const { data } = await api.get('/users', { params });
-        if (data.users) {
-          setUsers(data.users);
-          if (data.pagination) setPagination(data.pagination);
+        if (data.data) {
+          setUsers(data.data);
+          setPagination({ total: data.total, page: data.page, limit: data.limit, totalPages: data.totalPages });
         } else {
-          setUsers(data);
+          setUsers(Array.isArray(data) ? data : []);
         }
       } catch {
         toast.error('Failed to load users');
@@ -56,7 +56,7 @@ export default function UsersPage() {
 
   useEffect(() => {
     doFetchUsers(1);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [roleFilter, statusFilter]);
 
   const handleStatusChange = async (userId: string, newStatus: string) => {
     try {

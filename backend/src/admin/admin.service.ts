@@ -17,15 +17,20 @@ export class AdminService {
     if (findError || !user) throw new NotFoundException('User not found');
     if (user.is_approved) throw new BadRequestException('User already approved');
 
+    const updateData: any = {
+      is_approved: true,
+      approved_at: new Date().toISOString(),
+      status: 'ACTIVE',
+      updated_at: new Date().toISOString(),
+    };
+
+    if (approvedById !== '00000000-0000-0000-0000-000000000001') {
+      updateData.approved_by = approvedById;
+    }
+
     const { data, error } = await supabase
       .from('users')
-      .update({
-        is_approved: true,
-        approved_by: approvedById,
-        approved_at: new Date().toISOString(),
-        status: 'ACTIVE',
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq('id', userId)
       .select('id, email, first_name, last_name, role, status, is_approved')
       .single();
@@ -76,12 +81,13 @@ export class AdminService {
   async getDashboardStats() {
     const supabase = this.supabaseService.getClient();
 
-    const [totalUsers, totalManagers, totalReps, pendingApprovals, totalTasks] = await Promise.all([
+    const [totalUsers, totalManagers, totalReps, pendingApprovals, totalTasks, pendingUsersData] = await Promise.all([
       supabase.from('users').select('*', { count: 'exact', head: true }),
       supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'MANAGER').eq('status', 'ACTIVE'),
       supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'REP').eq('status', 'ACTIVE'),
       supabase.from('users').select('*', { count: 'exact', head: true }).eq('is_approved', false).neq('role', 'ADMIN'),
       supabase.from('tasks').select('*', { count: 'exact', head: true }),
+      supabase.from('users').select('id, email, first_name, last_name, role, created_at').eq('is_approved', false).neq('role', 'ADMIN').order('created_at', { ascending: true }),
     ]);
 
     return {
@@ -90,6 +96,7 @@ export class AdminService {
       total_reps: totalReps.count || 0,
       pending_approvals: pendingApprovals.count || 0,
       total_tasks: totalTasks.count || 0,
+      pending_users: pendingUsersData.data || [],
     };
   }
 }
