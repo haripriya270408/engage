@@ -1,6 +1,6 @@
 import { Controller, Post, Get, Body, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { ApproveUserDto } from './admin.dto';
+import { ApproveUserDto, AssignRepDto } from './admin.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -25,6 +25,16 @@ export class AdminController {
   @Get('pending-approvals')
   async getPendingApprovals() {
     return this.adminService.getPendingApprovals();
+  }
+
+  @Post('assign-rep')
+  async assignRep(@Body() dto: AssignRepDto) {
+    return this.adminService.assignRepToManager(dto.rep_id, dto.manager_id);
+  }
+
+  @Get('assignments')
+  async getAssignments() {
+    return this.adminService.getAssignments();
   }
 
   @Get('dashboard')

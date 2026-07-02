@@ -136,19 +136,19 @@ export class UpdateTaskDto {
 
 export class TaskFilterDto {
   @IsOptional()
-  @IsEnum(['EMAIL', 'CALL', 'LINKEDIN', 'MEETING', 'FOLLOW_UP', 'OTHER'])
+  @IsString()
   task_type?: string;
 
   @IsOptional()
-  @IsEnum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'])
+  @IsString()
   status?: string;
 
   @IsOptional()
-  @IsUUID()
+  @IsString()
   assigned_to?: string;
 
   @IsOptional()
-  @IsUUID()
+  @IsString()
   assigned_by?: string;
 
   @IsOptional()
@@ -158,12 +158,16 @@ export class TaskFilterDto {
   limit?: number;
 
   @IsOptional()
-  @IsDateString()
+  @IsString()
   due_date_from?: string;
 
   @IsOptional()
-  @IsDateString()
+  @IsString()
   due_date_to?: string;
+
+  @IsOptional()
+  @IsString()
+  overdue?: string;
 }
 
 export class CreateNoteDto {

@@ -23,7 +23,6 @@ export default function CreateTaskPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [usersLoading, setUsersLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [useTextInput, setUseTextInput] = useState(false);
 
   const [form, setForm] = useState({
     title: '',
@@ -40,27 +39,32 @@ export default function CreateTaskPage() {
     meeting_link: '',
     location: '',
     note: '',
-    is_recurring: false,
-    recurring_interval: '',
   });
 
   useEffect(() => {
+    if (!user) return; // wait until auth loads
+
+    // REPs don't need the user list — tasks auto-assign to themselves
+    if (user.role === 'REP') {
+      setUsersLoading(false);
+      return;
+    }
     const fetchUsers = async () => {
       try {
-        if (user?.role === 'MANAGER') {
+        if (user.role === 'MANAGER') {
           const { data } = await api.get('/teams/my-team');
           setUsers(data.reps || []);
         } else {
           const { data } = await api.get('/users/reps');
-          setUsers(data.users || data.data || []);
+          setUsers(Array.isArray(data) ? data : (data.users || data.data || []));
         }
       } catch {
-        setUseTextInput(true);
+        // silently ignore
       } finally {
         setUsersLoading(false);
       }
     };
-    if (user) fetchUsers();
+    fetchUsers();
   }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -87,7 +91,8 @@ export default function CreateTaskPage() {
         task_type: form.task_type,
         priority: form.priority,
         due_date: form.due_date ? new Date(form.due_date).toISOString() : undefined,
-        assigned_to: form.assigned_to || undefined,
+        // REPs are always assigned to themselves
+        assigned_to: user?.role === 'REP' ? user.id : (form.assigned_to || undefined),
         contact_name: form.contact_name || undefined,
         contact_email: form.contact_email || undefined,
         contact_phone: form.contact_phone || undefined,
@@ -96,8 +101,6 @@ export default function CreateTaskPage() {
         meeting_link: form.meeting_link || undefined,
         location: form.location || undefined,
         note: form.note || undefined,
-        is_recurring: form.is_recurring,
-        recurring_interval: form.is_recurring ? form.recurring_interval : undefined,
       };
 
       await api.post('/tasks', payload);
@@ -183,32 +186,29 @@ export default function CreateTaskPage() {
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
             />
           </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Assigned To</label>
-            {!useTextInput && !usersLoading ? (
-              <select
-                name="assigned_to"
-                value={form.assigned_to}
-                onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-              >
-                <option value="">Unassigned</option>
-                {users.map((u) => (
-                  <option key={u.id} value={u.id}>{u.first_name} {u.last_name} ({u.email})</option>
-                ))}
-              </select>
-            ) : (
-              <input
-                type="text"
-                name="assigned_to"
-                value={form.assigned_to}
-                onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-                placeholder="User ID"
-              />
-            )}
-            {usersLoading && <p className="mt-1 text-xs text-gray-500">Loading users...</p>}
-          </div>
+          {user?.role !== 'REP' && (
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Assigned To</label>
+              {!usersLoading ? (
+                <select
+                  name="assigned_to"
+                  value={form.assigned_to}
+                  onChange={handleChange}
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                >
+                  <option value="">Unassigned</option>
+                  {users.map((u) => (
+                    <option key={u.id} value={u.id}>{u.first_name} {u.last_name} ({u.email})</option>
+                  ))}
+                </select>
+              ) : (
+                <div className="flex items-center gap-2 py-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+                  <span className="text-xs text-gray-400">Loading...</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="border-t border-gray-200 pt-4">
@@ -304,28 +304,6 @@ export default function CreateTaskPage() {
           />
         </div>
 
-        <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2 text-sm text-gray-700">
-            <input
-              type="checkbox"
-              name="is_recurring"
-              checked={form.is_recurring}
-              onChange={handleChange}
-              className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-            />
-            Recurring Task
-          </label>
-          {form.is_recurring && (
-            <input
-              type="text"
-              name="recurring_interval"
-              value={form.recurring_interval}
-              onChange={handleChange}
-              className="w-48 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-              placeholder="e.g. daily, weekly, monthly"
-            />
-          )}
-        </div>
 
         <div className="flex items-center gap-3 border-t border-gray-200 pt-4">
           <button

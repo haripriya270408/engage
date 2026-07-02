@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sales Engage Platform",
+  title: "EngageSync",
   description: "Sales engagement and task management platform",
 };
 

@@ -11,7 +11,7 @@ interface AppUser {
   email: string;
   role: string;
   status: string;
-  approved: boolean;
+  is_approved: boolean;
   created_at: string;
 }
 
@@ -65,6 +65,16 @@ export default function UsersPage() {
       doFetchUsers(pagination.page);
     } catch {
       toast.error('Failed to update status');
+    }
+  };
+
+  const handleApprove = async (userId: string) => {
+    try {
+      await api.post('/admin/approve-user', { user_id: userId });
+      toast.success('User approved successfully');
+      doFetchUsers(pagination.page);
+    } catch {
+      toast.error('Failed to approve user');
     }
   };
 
@@ -146,20 +156,38 @@ export default function UsersPage() {
                       {u.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-foreground">{u.approved ? 'Yes' : 'No'}</td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        u.is_approved ? 'bg-green-50 text-success' : 'bg-yellow-50 text-warning'
+                      }`}
+                    >
+                      {u.is_approved ? 'Yes' : 'No'}
+                    </span>
+                  </td>
                   <td className="px-4 py-3 text-muted">
                     {new Date(u.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3">
-                    <select
-                      value={u.status}
-                      onChange={(e) => handleStatusChange(u.id, e.target.value)}
-                      className="rounded-lg border border-border px-2 py-1 text-xs outline-none focus:border-primary"
-                    >
-                      <option value="ACTIVE">Active</option>
-                      <option value="INACTIVE">Inactive</option>
-                      <option value="SUSPENDED">Suspended</option>
-                    </select>
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={u.status}
+                        onChange={(e) => handleStatusChange(u.id, e.target.value)}
+                        className="rounded-lg border border-border px-2 py-1 text-xs outline-none focus:border-primary"
+                      >
+                        <option value="ACTIVE">Active</option>
+                        <option value="INACTIVE">Inactive</option>
+                        <option value="SUSPENDED">Suspended</option>
+                      </select>
+                      {!u.is_approved && (
+                        <button
+                          onClick={() => handleApprove(u.id)}
+                          className="rounded-lg bg-primary px-2 py-1 text-xs font-medium text-white hover:opacity-90 transition-opacity"
+                        >
+                          Approve
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

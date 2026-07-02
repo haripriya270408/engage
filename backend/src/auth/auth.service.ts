@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { Injectable, ConflictException, UnauthorizedException, ForbiddenException, HttpException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { SupabaseService } from '../supabase/supabase.service';
@@ -121,6 +121,7 @@ export class AuthService {
     return { url, codeVerifier };
   }
 
+
   async loginMicrosoft(dto: MicrosoftLoginDto): Promise<AuthResponse> {
     const tenantId = process.env.OUTLOOK_TENANT_ID;
     const clientId = process.env.OUTLOOK_CLIENT_ID;
@@ -128,87 +129,117 @@ export class AuthService {
     const redirectUri = process.env.OUTLOOK_REDIRECT_URI;
 
     try {
-      // 1. Get access token from MS
-      const tokenResponse = await axios.post(
-        `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
-        qs.stringify({
-          client_id: clientId,
-          scope: 'User.Read',
-          code: dto.code,
-          redirect_uri: redirectUri,
-          grant_type: 'authorization_code',
-          code_verifier: dto.codeVerifier,
-        }),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Origin': 'http://localhost:3001',
-          },
-        }
-      );
+      let msToken = dto.msToken;
+      let email: string;
+      let first_name: string;
+      let last_name: string;
 
-      const msToken = tokenResponse.data.access_token;
+      if (msToken) {
+        // msToken already obtained — just fetch profile (token is still valid)
+        const profileResponse = await axios.get('https://graph.microsoft.com/v1.0/me', {
+          headers: { Authorization: `Bearer ${msToken}` },
+        });
+        const msUser = profileResponse.data;
+        email = msUser.mail || msUser.userPrincipalName;
+        first_name = msUser.givenName || 'Unknown';
+        last_name = msUser.surname || 'User';
+      } else {
+        // Exchange auth code for MS token
+        const tokenResponse = await axios.post(
+          `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+          qs.stringify({
+            client_id: clientId,
+            scope: 'User.Read',
+            code: dto.code,
+            redirect_uri: redirectUri,
+            grant_type: 'authorization_code',
+            code_verifier: dto.codeVerifier,
+          }),
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Origin': 'http://localhost:3001',
+            },
+          }
+        );
+        msToken = tokenResponse.data.access_token;
 
-      // 2. Get user profile from Graph API
-      const profileResponse = await axios.get('https://graph.microsoft.com/v1.0/me', {
-        headers: {
-          Authorization: `Bearer ${msToken}`,
-        },
-      });
-
-      const msUser = profileResponse.data;
-      const email = msUser.mail || msUser.userPrincipalName;
-      const first_name = msUser.givenName || 'Unknown';
-      const last_name = msUser.surname || 'User';
+        // Get user profile from Graph API
+        const profileResponse = await axios.get('https://graph.microsoft.com/v1.0/me', {
+          headers: { Authorization: `Bearer ${msToken}` },
+        });
+        const msUser = profileResponse.data;
+        email = msUser.mail || msUser.userPrincipalName;
+        first_name = msUser.givenName || 'Unknown';
+        last_name = msUser.surname || 'User';
+      }
 
       const supabase = this.supabaseService.getClient();
 
-      // 3. Check if user exists
-      let { data: user, error } = await supabase
+      // Check if user exists
+      let { data: user } = await supabase
         .from('users')
         .select('*')
         .eq('email', email)
-        .single();
+        .maybeSingle();
 
-      // 4. Create user if they don't exist
-      if (!user) {
-        if (!dto.role) {
-          throw new UnauthorizedException('ROLE_REQUIRED');
+      // Existing user — log them in directly (use their stored role, no re-registration)
+      if (user) {
+        if (user.status === 'SUSPENDED') {
+          throw new ForbiddenException('Account has been suspended');
+        }
+        // Only block if unapproved AND was explicitly set to inactive (not original MS auto-approved users)
+        if (!user.is_approved && user.status === 'INACTIVE') {
+          throw new ForbiddenException('Account pending admin approval');
         }
 
-        const { data: newUser, error: insertError } = await supabase
-          .from('users')
-          .insert({
-            email,
-            first_name,
-            last_name,
-            role: dto.role,
-            status: 'ACTIVE',
-            is_approved: true, // Auto-approve for MS logins for now
-            password_hash: 'OAUTH_USER_NO_PASSWORD',
-          })
-          .select('*')
-          .single();
+        const payload = { sub: user.id, email: user.email, role: user.role };
+        const access_token = this.jwtService.sign(payload);
 
-        if (insertError) throw insertError;
-        user = newUser;
+        return {
+          access_token,
+          user: {
+            id: user.id,
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            role: user.role,
+            status: user.status,
+          },
+        };
       }
 
-      const payload = { sub: user.id, email: user.email, role: user.role };
-      const access_token = this.jwtService.sign(payload);
+      // New user — role is required. Return msToken so frontend can skip re-exchanging the code.
+      if (!dto.role) {
+        throw new HttpException(
+          { message: 'ROLE_REQUIRED', msToken },
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
 
-      return {
-        access_token,
-        user: {
-          id: user.id,
-          email: user.email,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          role: user.role,
-          status: user.status,
-        },
-      };
+      const { data: newUser, error: insertError } = await supabase
+        .from('users')
+        .insert({
+          email,
+          first_name,
+          last_name,
+          role: dto.role,
+          status: 'INACTIVE',
+          is_approved: false,
+          password_hash: 'OAUTH_USER_NO_PASSWORD',
+        })
+        .select('*')
+        .single();
+
+      if (insertError) throw insertError;
+
+      // New user registered — pending admin approval, do not issue a token
+      throw new ForbiddenException('Account pending admin approval');
+
     } catch (error: any) {
+      if (error instanceof ForbiddenException || error instanceof UnauthorizedException || error instanceof HttpException) {
+        throw error;
+      }
       console.error('MS Login Error:', error?.response?.data || error);
       const errorMsg = error?.response?.data?.error_description || error?.message || 'Microsoft Authentication Failed';
       throw new UnauthorizedException(`Microsoft Authentication Failed: ${errorMsg}`);

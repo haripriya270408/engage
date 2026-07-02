@@ -14,26 +14,49 @@ export class SchedulerService {
     private outlookService: OutlookService,
   ) {}
 
-  @Cron(CronExpression.EVERY_30_MINUTES)
+  @Cron(CronExpression.EVERY_MINUTE)
   async sendDailyTaskEmails() {
     this.logger.log('Checking manager reminder settings...');
     const supabase = this.supabaseService.getClient();
     const now = new Date();
-    const currentHHMM = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-    const today = now.toISOString().split('T')[0];
+
+    // Use local date (not UTC) to avoid timezone mismatch for users in GMT+5:30 etc.
+    const todayLocal = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
     const { data: settings } = await supabase
       .from('daily_reminder_settings')
       .select('*')
       .eq('is_enabled', true);
 
-    if (!settings) return;
+    if (!settings || settings.length === 0) {
+      this.logger.log('No enabled reminder settings found.');
+      return;
+    }
+
+    this.logger.log(`Found ${settings.length} enabled reminder setting(s). Local today: ${todayLocal}, Local time: ${now.toTimeString().slice(0, 5)}`);
 
     for (const setting of settings) {
-      if (setting.reminder_time.slice(0, 5) !== currentHHMM) continue;
+      if (!setting.reminder_time) continue;
 
-      const lastSent = setting.last_sent_at ? setting.last_sent_at.split('T')[0] : '';
-      if (lastSent === today) continue;
+      const [remHH, remMM] = setting.reminder_time.split(':').map(Number);
+      const remDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), remHH, remMM, 0);
+
+      this.logger.log(`Setting [${setting.id}]: reminder_time=${setting.reminder_time}, last_sent_at=${setting.last_sent_at}, now=${now.toTimeString().slice(0,5)}, remDate=${remDate.toTimeString().slice(0,5)}`);
+
+      // Skip if the configured time has not yet been reached today
+      if (now < remDate) {
+        this.logger.log(`Skipping: reminder time ${setting.reminder_time} not yet reached.`);
+        continue;
+      }
+
+      const lastSentLocal = setting.last_sent_at
+        ? (() => { const d = new Date(setting.last_sent_at); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; })()
+        : '';
+
+      if (lastSentLocal === todayLocal) {
+        this.logger.log(`Skipping: already sent today (last_sent_at=${setting.last_sent_at}).`);
+        continue;
+      }
 
       const { data: manager } = await supabase
         .from('users')
@@ -49,7 +72,13 @@ export class SchedulerService {
         .eq('manager_id', manager.id);
 
       const repIds = (assignments || []).map(a => a.rep_id);
-      if (repIds.length === 0) continue;
+      if (repIds.length === 0) {
+        await supabase
+          .from('daily_reminder_settings')
+          .update({ last_sent_at: now.toISOString() })
+          .eq('id', setting.id);
+        continue;
+      }
 
       const { data: reps } = await supabase
         .from('users')
@@ -70,12 +99,16 @@ export class SchedulerService {
         ).join('\n');
 
         const subject = `Daily Task Summary - ${new Date().toLocaleDateString()}`;
-        const body = `
-          <p>Hi ${rep.first_name},</p>
-          <p>Here are your tasks for today:</p>
-          <pre>${taskList}</pre>
-          <p>Regards,<br/>${manager.first_name} ${manager.last_name}</p>
-        `.trim();
+        const body = [
+          `Hi ${rep.first_name},`,
+          ``,
+          `Here are your tasks for today:`,
+          ``,
+          taskList,
+          ``,
+          `Regards,`,
+          `${manager.first_name} ${manager.last_name}`,
+        ].join('\n');
 
         try {
           await this.outlookService.sendEmail(
@@ -85,6 +118,20 @@ export class SchedulerService {
           this.logger.log(`Sent daily task email to ${rep.email} from ${manager.email}`);
         } catch (err: any) {
           this.logger.error(`Failed to send email to ${rep.email}: ${err.message}`);
+          this.logger.log(`[EMAIL FALLBACK LOG] To: ${rep.email}, Subject: ${subject}\nBody:\n${body}`);
+        }
+
+        // Also create a system notification in-app for the Rep
+        try {
+          await this.notificationsService.create({
+            user_id: rep.id,
+            title: `Daily Tasks Summary from ${manager.first_name} ${manager.last_name}`,
+            message: `You have ${tasks.length} pending/in-progress tasks today.`,
+            type: 'info',
+            link: '/tasks',
+          });
+        } catch (err: any) {
+          this.logger.error(`Failed to create system notification for ${rep.email}: ${err.message}`);
         }
       }
 

@@ -53,4 +53,8 @@ export class MicrosoftLoginDto {
   @IsOptional()
   @IsEnum(['MANAGER', 'REP'])
   role?: 'MANAGER' | 'REP';
+
+  @IsOptional()
+  @IsString()
+  msToken?: string; // Pre-fetched MS Graph token (avoids re-exchanging the code)
 }

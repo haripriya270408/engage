@@ -132,23 +132,56 @@ export class ReportsService {
     return activities;
   }
 
-  async getEmailStats(userId: string, startDate?: string, endDate?: string) {
+  async getEmailStats(userId: string, userRole: string, startDate?: string, endDate?: string) {
     const supabase = this.supabaseService.getClient();
-    let query = supabase
-      .from('email_logs')
-      .select('*')
-      .eq('user_id', userId);
 
-    if (startDate) query = query.gte('sent_at', startDate);
-    if (endDate) query = query.lte('sent_at', endDate);
+    // Determine which user IDs to scope to
+    let scopedUserIds: string[] | null = null;
 
-    const { data, error } = await query;
-    if (error) throw error;
+    if (userRole === 'REP') {
+      scopedUserIds = [userId];
+    } else if (userRole === 'MANAGER') {
+      const { data: assignments } = await supabase
+        .from('manager_rep_assignments')
+        .select('rep_id')
+        .eq('manager_id', userId);
+      const repIds = (assignments || []).map((a: any) => a.rep_id);
+      repIds.push(userId);
+      scopedUserIds = repIds;
+    }
+    // ADMIN: scopedUserIds stays null → no user filter → counts all
+
+    // Count email_sent activities from task_activities
+    let actQuery = supabase
+      .from('task_activities')
+      .select('*', { count: 'exact', head: true })
+      .eq('activity_type', 'email_sent');
+
+    if (startDate) actQuery = actQuery.gte('created_at', startDate);
+    if (endDate) actQuery = actQuery.lte('created_at', endDate);
+    if (scopedUserIds) actQuery = actQuery.in('user_id', scopedUserIds);
+
+    const { count: emailsSent } = await actQuery;
+
+    // Count EMAIL-type tasks (COMPLETED = sent, PENDING/IN_PROGRESS = draft proxy)
+    let taskQuery = supabase
+      .from('tasks')
+      .select('status', { count: 'exact' })
+      .eq('task_type', 'EMAIL');
+
+    if (startDate) taskQuery = taskQuery.gte('created_at', startDate);
+    if (endDate) taskQuery = taskQuery.lte('created_at', endDate);
+    if (scopedUserIds) taskQuery = taskQuery.in('assigned_to', scopedUserIds);
+
+    const { data: emailTasks } = await taskQuery;
+
+    const completedEmailTasks = (emailTasks || []).filter((t: any) => t.status === 'COMPLETED').length;
+    const draftEmailTasks = (emailTasks || []).filter((t: any) => ['PENDING', 'IN_PROGRESS'].includes(t.status)).length;
 
     return {
-      total_sent: data?.length || 0,
-      drafts: data?.filter(e => e.is_draft).length || 0,
-      sent: data?.filter(e => !e.is_draft).length || 0,
+      total_sent: emailsSent || 0,
+      sent: completedEmailTasks,
+      drafts: draftEmailTasks,
     };
   }
 }

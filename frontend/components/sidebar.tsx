@@ -52,7 +52,7 @@ export default function Sidebar() {
         {!collapsed && (
           <div className="flex items-center gap-2">
             <Image src="/RelantoLogo.svg" alt="Relanto Logo" width={32} height={32} />
-            <span className="text-lg font-semibold text-foreground">Engage</span>
+            <span className="text-lg font-semibold text-foreground">EngageSync</span>
           </div>
         )}
         <button

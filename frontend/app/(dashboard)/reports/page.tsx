@@ -21,11 +21,6 @@ interface RepPerformance {
   completion_rate: number;
 }
 
-interface EmailStats {
-  total_sent: number;
-  drafts: number;
-  sent: number;
-}
 
 interface Activity {
   id: string;
@@ -56,9 +51,6 @@ export default function ReportsPage() {
   const [repPerformance, setRepPerformance] = useState<RepPerformance[]>([]);
   const [loadingReps, setLoadingReps] = useState(true);
 
-  const [emailStats, setEmailStats] = useState<EmailStats | null>(null);
-  const [loadingEmail, setLoadingEmail] = useState(true);
-
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loadingActivity, setLoadingActivity] = useState(true);
   const [activityFilter, setActivityFilter] = useState('');
@@ -75,13 +67,11 @@ export default function ReportsPage() {
 
     const load = async () => {
       try {
-        const [summaryRes, emailRes, activityRes] = await Promise.all([
+        const [summaryRes, activityRes] = await Promise.all([
           api.get('/reports/task-summary', { params }),
-          api.get('/reports/email-stats', { params }),
           api.get('/reports/user-activity', { params: actParams }),
         ]);
         setTaskSummary(summaryRes.data);
-        setEmailStats(emailRes.data);
         setActivities(activityRes.data);
       } catch {
         toast.error('Failed to load report data');
@@ -97,7 +87,6 @@ export default function ReportsPage() {
       }
 
       setLoadingSummary(false);
-      setLoadingEmail(false);
       if (canSeeRepPerformance) setLoadingReps(false);
       setLoadingActivity(false);
     };
@@ -160,32 +149,6 @@ export default function ReportsPage() {
                     </span>
                   ))}
                 </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="rounded-xl border border-border bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-medium text-foreground">Email Stats</h2>
-          {loadingEmail ? (
-            <div className="flex justify-center py-8">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-            </div>
-          ) : !emailStats ? (
-            <p className="text-sm text-muted">No data available</p>
-          ) : (
-            <div className="grid grid-cols-3 gap-4">
-              <div className="rounded-lg bg-gray-50 p-4 text-center">
-                <p className="text-2xl font-bold text-foreground">{emailStats.total_sent}</p>
-                <p className="text-xs text-muted">Total Sent</p>
-              </div>
-              <div className="rounded-lg bg-gray-50 p-4 text-center">
-                <p className="text-2xl font-bold text-foreground">{emailStats.sent}</p>
-                <p className="text-xs text-muted">Sent</p>
-              </div>
-              <div className="rounded-lg bg-gray-50 p-4 text-center">
-                <p className="text-2xl font-bold text-foreground">{emailStats.drafts}</p>
-                <p className="text-xs text-muted">Drafts</p>
               </div>
             </div>
           )}

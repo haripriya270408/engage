@@ -8,3 +8,11 @@ export class ApproveUserDto {
   @IsUUID()
   manager_id?: string;
 }
+
+export class AssignRepDto {
+  @IsUUID()
+  rep_id: string;
+
+  @IsUUID()
+  manager_id: string;
+}

@@ -75,6 +75,62 @@ export class AdminService {
     return data;
   }
 
+  async assignRepToManager(repId: string, managerId: string) {
+    const supabase = this.supabaseService.getClient();
+
+    // Verify rep exists and is a REP
+    const { data: rep, error: repError } = await supabase
+      .from('users')
+      .select('id, role')
+      .eq('id', repId)
+      .single();
+
+    if (repError || !rep) throw new NotFoundException('Rep not found');
+    if (rep.role !== 'REP') throw new BadRequestException('User is not a Sales Rep');
+
+    // Verify manager exists and is a MANAGER
+    const { data: manager, error: managerError } = await supabase
+      .from('users')
+      .select('id, role')
+      .eq('id', managerId)
+      .single();
+
+    if (managerError || !manager) throw new NotFoundException('Manager not found');
+    if (manager.role !== 'MANAGER') throw new BadRequestException('Target user is not a Manager');
+
+    // Remove ALL existing manager assignments for this rep (enforces one-manager-per-rep)
+    await supabase
+      .from('manager_rep_assignments')
+      .delete()
+      .eq('rep_id', repId);
+
+    // Insert the new assignment
+    const { data, error } = await supabase
+      .from('manager_rep_assignments')
+      .insert({ manager_id: managerId, rep_id: repId })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { message: 'Rep assigned to manager successfully', assignment: data };
+  }
+
+  async getAssignments() {
+    const supabase = this.supabaseService.getClient();
+    const { data, error } = await supabase
+      .from('manager_rep_assignments')
+      .select(`
+        id,
+        assigned_at,
+        manager:manager_id ( id, first_name, last_name, email ),
+        rep:rep_id ( id, first_name, last_name, email )
+      `)
+      .order('assigned_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  }
+
   async getPendingApprovals() {
     const supabase = this.supabaseService.getClient();
     const { data, error } = await supabase

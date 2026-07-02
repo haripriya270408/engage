@@ -29,8 +29,16 @@ export default function LoginPage() {
       toast.success('Login successful');
       // Role redirection handled by useEffect
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      toast.error(error.response?.data?.message || 'Login failed. Please try again.');
+      const error = err as { response?: { data?: { message?: string }; status?: number } };
+      const status = error.response?.status;
+      const message = error.response?.data?.message || '';
+      if (status === 403 && message.toLowerCase().includes('pending')) {
+        toast.error('Your account is pending admin approval. Please wait for approval before logging in.');
+      } else if (status === 403 && message.toLowerCase().includes('suspended')) {
+        toast.error('Your account has been suspended. Please contact an administrator.');
+      } else {
+        toast.error(message || 'Login failed. Please try again.');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -38,12 +46,13 @@ export default function LoginPage() {
 
   const handleMicrosoftLogin = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/auth/microsoft/url');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+      const res = await fetch(`${apiUrl}/auth/microsoft/url`);
       const data = await res.json();
       if (data.url && data.url.url) {
         sessionStorage.setItem('pkce_verifier', data.url.codeVerifier);
         window.location.href = data.url.url;
-      } else if (data.url) { // fallback just in case
+      } else if (data.url) {
         sessionStorage.setItem('pkce_verifier', data.codeVerifier);
         window.location.href = data.url;
       } else {
@@ -70,7 +79,7 @@ export default function LoginPage() {
       </div>
 
       <div className="w-full max-w-[500px] rounded-3xl border border-gray-200 bg-white p-10 shadow-lg z-10 mx-4 relative">
-        <h1 className="text-4xl font-bold text-[#0066cc] mb-8">EngageSynch</h1>
+        <h1 className="text-4xl font-bold text-[#0066cc] mb-8">EngageSync</h1>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>

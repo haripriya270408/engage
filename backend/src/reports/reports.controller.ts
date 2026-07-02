@@ -42,10 +42,10 @@ export class ReportsController {
 
   @Get('email-stats')
   async getEmailStats(
-    @CurrentUser() user: { sub: string },
+    @CurrentUser() user: { sub: string; role: string },
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
-    return this.reportsService.getEmailStats(user.sub, startDate, endDate);
+    return this.reportsService.getEmailStats(user.sub, user.role, startDate, endDate);
   }
 }

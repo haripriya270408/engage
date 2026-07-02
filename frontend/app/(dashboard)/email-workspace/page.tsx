@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/lib/auth-context';
@@ -38,6 +38,12 @@ export default function EmailPage() {
   const [aiContext, setAiContext] = useState('');
   const [generating, setGenerating] = useState(false);
 
+  useEffect(() => {
+    if (activeTab === 'Templates') {
+      fetchTemplates();
+    }
+  }, [activeTab]);
+
   const handleSend = async () => {
     if (!to.trim()) { toast.error('Please enter at least one recipient'); return; }
     setSending(true);
@@ -62,16 +68,13 @@ export default function EmailPage() {
     }
   };
 
-  const handleSaveDraft = async () => {
+  const handleDeleteTemplate = async (templateId: string) => {
     try {
-      await api.post('/email/templates', {
-        name: `Draft - ${subject || 'Untitled'}`,
-        subject,
-        body,
-      });
-      toast.success('Draft saved');
+      await api.delete(`/email/templates/${templateId}`);
+      toast.success('Template deleted successfully');
+      fetchTemplates();
     } catch {
-      toast.error('Failed to save draft');
+      toast.error('Failed to delete template');
     }
   };
 
@@ -205,12 +208,7 @@ export default function EmailPage() {
             >
               {sending ? 'Sending...' : 'Send'}
             </button>
-            <button
-              onClick={handleSaveDraft}
-              className="rounded-lg border border-border px-5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-gray-50"
-            >
-              Save Draft
-            </button>
+
             <button
               onClick={async () => {
                 const textarea = document.getElementById('email-body-textarea') as HTMLTextAreaElement;
@@ -315,10 +313,25 @@ export default function EmailPage() {
                 <div
                   key={tpl.id}
                   onClick={() => loadTemplate(tpl)}
-                  className="cursor-pointer rounded-xl border border-border bg-white p-4 transition-colors hover:bg-gray-50"
+                  className="cursor-pointer rounded-xl border border-border bg-white p-4 transition-colors hover:bg-gray-50 flex items-center justify-between"
                 >
-                  <h3 className="font-medium text-foreground">{tpl.name}</h3>
-                  {tpl.subject && <p className="mt-1 text-sm text-muted">{tpl.subject}</p>}
+                  <div>
+                    <h3 className="font-medium text-foreground">{tpl.name}</h3>
+                    {tpl.subject && <p className="mt-1 text-sm text-muted">{tpl.subject}</p>}
+                  </div>
+                  {user?.role === 'MANAGER' && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (confirm('Are you sure you want to delete this template?')) {
+                          handleDeleteTemplate(tpl.id);
+                        }
+                      }}
+                      className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-100"
+                    >
+                      Delete
+                    </button>
+                  )}
                 </div>
               ))}
             </div>

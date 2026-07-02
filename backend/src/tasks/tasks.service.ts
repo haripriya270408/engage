@@ -6,12 +6,14 @@ import { CreateTaskDto, UpdateTaskDto, TaskFilterDto, CreateNoteDto } from './ta
 export class TasksService {
   constructor(private supabaseService: SupabaseService) {}
 
-  async create(dto: CreateTaskDto, userId: string) {
+  async create(dto: CreateTaskDto, userId: string, userRole?: string) {
     const supabase = this.supabaseService.getClient();
+    const assignedTo = userRole === 'REP' ? userId : (dto.assigned_to || null);
     const taskData = {
       ...dto,
+      assigned_to: assignedTo,
       created_by: userId,
-      assigned_by: dto.assigned_to ? userId : null,
+      assigned_by: assignedTo ? userId : null,
       status: 'PENDING',
     };
 
@@ -25,8 +27,8 @@ export class TasksService {
 
     await this.logActivity(data.id, userId, 'CREATED', 'Task created');
 
-    if (dto.assigned_to) {
-      await this.logActivity(data.id, userId, 'ASSIGNED', `Task assigned to user ${dto.assigned_to}`);
+    if (assignedTo) {
+      await this.logActivity(data.id, userId, 'ASSIGNED', `Task assigned to user ${assignedTo}`);
     }
 
     return data;
@@ -60,6 +62,12 @@ export class TasksService {
     if (filters.assigned_by) builder = builder.eq('assigned_by', filters.assigned_by);
     if (filters.due_date_from) builder = builder.gte('due_date', filters.due_date_from);
     if (filters.due_date_to) builder = builder.lte('due_date', filters.due_date_to);
+    if (filters.overdue === 'true') {
+      builder = builder
+        .neq('status', 'COMPLETED')
+        .neq('status', 'CANCELLED')
+        .lte('due_date', new Date().toISOString());
+    }
 
     const { data, error, count } = await builder
       .order('created_at', { ascending: false })
@@ -183,11 +191,10 @@ export class TasksService {
       const { data: tasks } = await builder;
       const allTasks = tasks || [];
       const total = allTasks.length;
-      const completed = allTasks.filter(t => t.status === 'COMPLETED').length;
       const pending = allTasks.filter(t => t.status === 'PENDING').length;
-      const inProgress = allTasks.filter(t => t.status === 'IN_PROGRESS').length;
       const now = new Date();
 
+      // Overdue definition
       const openTasks = allTasks.filter(t => t.status !== 'COMPLETED' && t.status !== 'CANCELLED');
       const upcoming = openTasks.filter(t => t.due_date && new Date(t.due_date) > now);
       const overdue_tasks = openTasks.filter(t => t.due_date && new Date(t.due_date) <= now);
@@ -195,14 +202,62 @@ export class TasksService {
       const enrichedUpcoming = await this.enrichTasks(upcoming);
       const enrichedOverdue = await this.enrichTasks(overdue_tasks);
 
+      // Grouped tasks for the dashboard
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
+      const todayTasks = allTasks.filter(t => {
+        if (t.status === 'CANCELLED') return false;
+        if (!t.due_date) return false;
+        const d = new Date(t.due_date);
+        const isDueToday = d >= startOfToday && d <= endOfToday;
+        const isOverdue = d < startOfToday && t.status !== 'COMPLETED';
+        return isDueToday || isOverdue;
+      });
+
+      const todayCompleted = todayTasks.filter(t => t.status === 'COMPLETED');
+      const inProgressTasks = allTasks.filter(t => t.status === 'IN_PROGRESS');
+      const upcomingTasks = allTasks.filter(t => {
+        if (t.status === 'COMPLETED' || t.status === 'CANCELLED') return false;
+        if (!t.due_date) return false;
+        const d = new Date(t.due_date);
+        return d > endOfToday;
+      });
+      const completedTasks = allTasks.filter(t => t.status === 'COMPLETED');
+
+      const enrichedToday = await this.enrichTasks(todayTasks);
+      const enrichedInProgress = await this.enrichTasks(inProgressTasks);
+      const enrichedUpcomingTasks = await this.enrichTasks(upcomingTasks);
+      const enrichedCompletedTasks = await this.enrichTasks(completedTasks);
+
+      // Fetch recent activities for this user's tasks
+      const taskIds = allTasks.map(t => t.id);
+      let activities: any[] = [];
+      if (taskIds.length > 0) {
+        const { data: acts } = await supabase
+          .from('task_activities')
+          .select('*, tasks(id, title, task_type), users!task_activities_user_id_fkey(id, email, first_name, last_name)')
+          .in('task_id', taskIds)
+          .order('created_at', { ascending: false })
+          .limit(10);
+        activities = acts || [];
+      }
+
       return {
         total,
-        completed,
+        completed: completedTasks.length,
         pending,
-        inProgress,
+        inProgress: inProgressTasks.length,
         overdue: overdue_tasks.length,
         upcoming: enrichedUpcoming,
         overdue_tasks: enrichedOverdue,
+        today_count: todayTasks.length,
+        today_completed_count: todayCompleted.length,
+        today_tasks: enrichedToday,
+        in_progress_tasks: enrichedInProgress,
+        upcoming_tasks: enrichedUpcomingTasks,
+        completed_tasks: enrichedCompletedTasks,
+        activities,
       };
     }
 

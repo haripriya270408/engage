@@ -93,9 +93,9 @@ export class NotificationsService {
           .eq('user_id', assignments.manager_id)
           .maybeSingle();
         if (error) throw error;
-        return data ? { enabled: data.is_enabled, reminder_time: data.reminder_time, readonly: true } : null;
+        return data ? { enabled: data.is_enabled, reminder_time: data.reminder_time, readonly: true } : { enabled: false, reminder_time: '09:00:00', readonly: true };
       }
-      return null;
+      return { enabled: false, reminder_time: '09:00:00', readonly: true };
     }
     const { data, error } = await supabase
       .from('daily_reminder_settings')
@@ -104,7 +104,7 @@ export class NotificationsService {
       .maybeSingle();
 
     if (error) throw error;
-    if (!data) return null;
+    if (!data) return { enabled: false, reminder_time: '09:00:00' };
     return { enabled: data.is_enabled, reminder_time: data.reminder_time };
   }
 

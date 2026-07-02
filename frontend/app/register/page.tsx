@@ -17,7 +17,7 @@ function roleRedirect(role: string): string {
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { user, loading, register } = useAuth();
+  const { user, loading } = useAuth();
   const [first_name, setFirstName] = useState('');
   const [last_name, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -25,6 +25,7 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState('REP');
   const [submitting, setSubmitting] = useState(false);
+  const [registered, setRegistered] = useState(false);
 
   useEffect(() => {
     if (!loading && user) {
@@ -36,15 +37,25 @@ export default function RegisterPage() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await register({ first_name, last_name, email, password, phone: phone || undefined, role });
-      const stored = localStorage.getItem('user');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        toast.success('Registration successful');
-        router.push(roleRedirect(parsed.role));
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/auth/register`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ first_name, last_name, email, password, phone: phone || undefined, role }),
+        }
+      );
+
+      if (!res.ok) {
+        const err = await res.json();
+        toast.error(err.message || 'Registration failed. Please try again.');
+        return;
       }
+
+      // Registration succeeded — account is pending approval, do NOT log in
+      setRegistered(true);
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Registration failed. Please try again.');
+      toast.error('Registration failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -54,6 +65,34 @@ export default function RegisterPage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  // Pending approval screen — shown after successful registration
+  if (registered) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-sm text-center">
+          <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-yellow-50">
+            <svg className="h-7 w-7 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Account Created</h1>
+          <p className="text-gray-600 text-sm mb-2">
+            Welcome, <span className="font-medium">{first_name}</span>! Your account has been created successfully.
+          </p>
+          <p className="text-gray-500 text-sm mb-8">
+            An administrator needs to approve your account before you can log in. You'll be able to sign in once the approval is granted — this usually takes less than a business day.
+          </p>
+          <Link
+            href="/login"
+            className="block w-full rounded-xl bg-primary px-4 py-3 text-center font-medium text-white hover:bg-primary-hover transition-colors"
+          >
+            Back to Login
+          </Link>
+        </div>
       </div>
     );
   }
