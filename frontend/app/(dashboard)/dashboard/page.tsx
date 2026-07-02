@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
@@ -15,6 +14,8 @@ interface Task {
   status: string;
   priority: string;
   due_date: string;
+  contact_name?: string;
+  assigned_to_user?: { first_name: string; last_name: string; email: string };
 }
 
 interface Activity {
@@ -49,6 +50,38 @@ interface DashboardData {
   activities: Activity[];
 }
 
+// Task type icon map
+const TASK_TYPE_ICON: Record<string, string> = {
+  EMAIL: '✉️',
+  CALL: '📞',
+  LINKEDIN: 'in',
+  MEETING: '🗓️',
+  FOLLOW_UP: '🔁',
+  OTHER: '📋',
+};
+
+const ACTIVITY_TYPE_ICON: Record<string, { bg: string; emoji: string }> = {
+  CREATED:       { bg: 'bg-blue-100',   emoji: '🆕' },
+  STATUS_CHANGED:{ bg: 'bg-yellow-100', emoji: '🔄' },
+  ASSIGNED:      { bg: 'bg-purple-100', emoji: '👤' },
+  NOTE_ADDED:    { bg: 'bg-green-100',  emoji: '📝' },
+  email_sent:    { bg: 'bg-blue-100',   emoji: '✉️' },
+  DEFAULT:       { bg: 'bg-gray-100',   emoji: '🔧' },
+};
+
+function getInitials(firstName?: string, lastName?: string) {
+  return `${(firstName || '')[0] || ''}${(lastName || '')[0] || ''}`.toUpperCase() || '??';
+}
+
+function timeAgo(dateStr: string) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
+
 export default function DashboardPage() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
@@ -56,22 +89,105 @@ export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [pageLoading, setPageLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'today' | 'in_progress' | 'upcoming' | 'completed' | 'snoozed'>('today');
-  const [activeActivityTab, setActiveActivityTab] = useState<'ALL' | 'EMAIL' | 'CALL' | 'LINKEDIN'>('ALL');
+  const [activeActivityTab, setActiveActivityTab] = useState<'ALL' | 'EMAIL' | 'CALL' | 'LINKEDIN' | 'CUSTOM'>('ALL');
+  const [checkedTasks, setCheckedTasks] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState('');
+  const [groupBy, setGroupBy] = useState<'none' | 'priority' | 'type'>('none');
+  const [sortBy, setSortBy] = useState<'due_date' | 'priority'>('due_date');
+
+  const [isBulkActing, setIsBulkActing] = useState(false);
+  const [openDueDateModal, setOpenDueDateModal] = useState(false);
+  const [openSnoozeModal, setOpenSnoozeModal] = useState(false);
+  const [selectedDueDate, setSelectedDueDate] = useState('');
+
+  const removeSnoozedIds = (idsToRemove: string[]) => {
+    try {
+      const current = JSON.parse(localStorage.getItem('snoozed_task_ids') || '[]');
+      const filtered = current.filter((id: string) => !idsToRemove.includes(id));
+      localStorage.setItem('snoozed_task_ids', JSON.stringify(filtered));
+    } catch {}
+  };
+
+  const handleBulkComplete = async () => {
+    setIsBulkActing(true);
+    const loadingToast = toast.loading('Marking tasks complete...');
+    try {
+      const idsArray = Array.from(checkedTasks);
+      await Promise.all(
+        idsArray.map((taskId) =>
+          api.patch(`/tasks/${taskId}`, { status: 'COMPLETED' })
+        )
+      );
+      removeSnoozedIds(idsArray);
+      toast.success(`Successfully marked ${checkedTasks.size} task(s) as complete!`, { id: loadingToast });
+      setCheckedTasks(new Set());
+      fetchDashboardData();
+    } catch {
+      toast.error('Failed to complete some tasks.', { id: loadingToast });
+    } finally {
+      setIsBulkActing(false);
+    }
+  };
+
+  const handleBulkUpdateDueDate = async (dueDateStr: string) => {
+    if (!dueDateStr) return;
+    setIsBulkActing(true);
+    const loadingToast = toast.loading('Updating due dates...');
+    try {
+      const idsArray = Array.from(checkedTasks);
+      await Promise.all(
+        idsArray.map((taskId) =>
+          api.patch(`/tasks/${taskId}`, { due_date: new Date(dueDateStr).toISOString() })
+        )
+      );
+      removeSnoozedIds(idsArray);
+      toast.success(`Updated due date for ${checkedTasks.size} task(s)!`, { id: loadingToast });
+      setCheckedTasks(new Set());
+      setOpenDueDateModal(false);
+      fetchDashboardData();
+    } catch {
+      toast.error('Failed to update due dates.', { id: loadingToast });
+    } finally {
+      setIsBulkActing(false);
+    }
+  };
+
+  const handleBulkSnooze = async (days: number) => {
+    setIsBulkActing(true);
+    const loadingToast = toast.loading('Snoozing tasks...');
+    try {
+      const newDueDate = new Date();
+      newDueDate.setDate(newDueDate.getDate() + days);
+      const idsArray = Array.from(checkedTasks);
+      await Promise.all(
+        idsArray.map((taskId) =>
+          api.patch(`/tasks/${taskId}`, { due_date: newDueDate.toISOString() })
+        )
+      );
+      
+      // Save to localStorage
+      try {
+        const snoozedIds = JSON.parse(localStorage.getItem('snoozed_task_ids') || '[]');
+        const newSnoozedIds = Array.from(new Set([...snoozedIds, ...idsArray]));
+        localStorage.setItem('snoozed_task_ids', JSON.stringify(newSnoozedIds));
+      } catch {}
+
+      toast.success(`Snoozed ${checkedTasks.size} task(s)!`, { id: loadingToast });
+      setCheckedTasks(new Set());
+      setOpenSnoozeModal(false);
+      fetchDashboardData();
+    } catch {
+      toast.error('Failed to snooze tasks.', { id: loadingToast });
+    } finally {
+      setIsBulkActing(false);
+    }
+  };
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
-      return;
-    }
+    if (!loading && !user) { router.push('/login'); return; }
     if (!loading && user) {
-      if (user.role === 'ADMIN') {
-        router.push('/dashboard/admin');
-        return;
-      }
-      if (user.role === 'MANAGER') {
-        router.push('/dashboard/manager');
-        return;
-      }
+      if (user.role === 'ADMIN') { router.push('/dashboard/admin'); return; }
+      if (user.role === 'MANAGER') { router.push('/dashboard/manager'); return; }
       fetchDashboardData();
     }
   }, [loading, user, router]);
@@ -90,381 +206,675 @@ export default function DashboardPage() {
   if (loading || pageLoading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
       </div>
     );
   }
 
-  // Get active list tasks
-  const getActiveTasks = () => {
-    if (!data) return [];
-    switch (activeTab) {
-      case 'today':
-        return data.today_tasks || [];
-      case 'in_progress':
-        return data.in_progress_tasks || [];
-      case 'upcoming':
-        return data.upcoming_tasks || [];
-      case 'completed':
-        return data.completed_tasks || [];
-      case 'snoozed':
-      default:
-        return [];
+  const PRIORITY_ORDER: Record<string, number> = { URGENT: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+  const STATUS_ORDER: Record<string, number> = { IN_PROGRESS: 0, PENDING: 1, COMPLETED: 2, CANCELLED: 3 };
+
+  const getSnoozedIds = (): string[] => {
+    if (typeof window === 'undefined') return [];
+    try {
+      return JSON.parse(localStorage.getItem('snoozed_task_ids') || '[]');
+    } catch {
+      return [];
     }
   };
 
-  const displayTasks = getActiveTasks();
+  const snoozedIds = getSnoozedIds();
+  const snoozedIdsSet = new Set(snoozedIds);
 
-  // Get filtered activities
-  const getFilteredActivities = () => {
-    if (!data || !data.activities) return [];
-    if (activeActivityTab === 'ALL') return data.activities;
-    return data.activities.filter(
-      (act) => act.tasks?.task_type === activeActivityTab
+  const getActiveTasks = () => {
+    if (!data) return [];
+    const now = new Date();
+    const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
+    switch (activeTab) {
+      case 'today':       return data.today_tasks || [];
+      case 'in_progress': return data.in_progress_tasks || [];
+      case 'upcoming': {
+        const upcomingTasks = data.upcoming_tasks || [];
+        return upcomingTasks.filter(t => !snoozedIdsSet.has(t.id));
+      }
+      case 'completed':   return data.completed_tasks || [];
+      case 'snoozed': {
+        const allPotentialTasks = [
+          ...(data.today_tasks || []),
+          ...(data.in_progress_tasks || []),
+          ...(data.upcoming_tasks || [])
+        ];
+        const uniqueTasksMap = new Map<string, Task>();
+        allPotentialTasks.forEach(t => uniqueTasksMap.set(t.id, t));
+        
+        return Array.from(uniqueTasksMap.values()).filter(t => 
+          snoozedIdsSet.has(t.id) && t.due_date && new Date(t.due_date) > endOfToday
+        );
+      }
+      default:            return [];
+    }
+  };
+
+  const q = searchQuery.toLowerCase().trim();
+  const filteredTasks = getActiveTasks().filter((t) => {
+    if (!q) return true;
+    return (
+      t.title.toLowerCase().includes(q) ||
+      (t.description || '').toLowerCase().includes(q) ||
+      (t.contact_name || '').toLowerCase().includes(q) ||
+      t.task_type.toLowerCase().includes(q) ||
+      t.priority.toLowerCase().includes(q)
     );
+  });
+
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    if (sortBy === 'priority') return (PRIORITY_ORDER[a.priority] ?? 9) - (PRIORITY_ORDER[b.priority] ?? 9);
+    // due_date
+    if (!a.due_date && !b.due_date) return 0;
+    if (!a.due_date) return 1;
+    if (!b.due_date) return -1;
+    return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+  });
+
+  // Group tasks
+  const groupTasks = (tasks: Task[]): { label: string; tasks: Task[] }[] => {
+    if (groupBy === 'none') return [{ label: '', tasks }];
+    const groups: Record<string, Task[]> = {};
+    tasks.forEach((t) => {
+      const key = groupBy === 'priority' ? t.priority : t.task_type;
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(t);
+    });
+    const ordered = groupBy === 'priority'
+      ? ['URGENT','HIGH','MEDIUM','LOW']
+      : ['EMAIL','CALL','LINKEDIN','MEETING','FOLLOW_UP','OTHER'];
+    return ordered.filter((k) => groups[k]).map((k) => ({ label: k, tasks: groups[k] }));
+  };
+
+  const displayTasks = sortedTasks;
+  const taskGroups = groupTasks(sortedTasks);
+
+  const getFilteredActivities = () => {
+    if (!data?.activities) return [];
+    if (activeActivityTab === 'ALL') return data.activities;
+    return data.activities.filter((a) => a.tasks?.task_type === activeActivityTab);
   };
 
   const displayActivities = getFilteredActivities();
 
-  // Progress calculations
   const todayCount = data?.today_count ?? 0;
   const todayCompletedCount = data?.today_completed_count ?? 0;
   const todayPercentage = todayCount > 0 ? Math.round((todayCompletedCount / todayCount) * 100) : 0;
 
-  // Count high/urgent priority remaining today
-  const remainingHighPriorityToday = (data?.today_tasks || []).filter(
+  const highPriorityRemaining = (data?.today_tasks || []).filter(
     (t) => (t.priority === 'HIGH' || t.priority === 'URGENT') && t.status !== 'COMPLETED'
   ).length;
 
-  // Counts for tabs
+  const atRisk = data?.overdue ?? 0;
+
+  const snoozedCount = (() => {
+    if (!data) return 0;
+    const now = new Date();
+    const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+    const allPotentialTasks = [
+      ...(data.today_tasks || []),
+      ...(data.in_progress_tasks || []),
+      ...(data.upcoming_tasks || [])
+    ];
+    const uniqueIds = new Set<string>();
+    const matches = allPotentialTasks.filter(t => {
+      if (uniqueIds.has(t.id)) return false;
+      uniqueIds.add(t.id);
+      return snoozedIdsSet.has(t.id) && t.due_date && new Date(t.due_date) > endOfToday;
+    });
+    return matches.length;
+  })();
+
+  const upcomingCount = (data?.upcoming_tasks || []).filter(t => !snoozedIdsSet.has(t.id)).length;
+
   const tabCounts = {
-    today: todayCount,
+    today:       todayCount,
     in_progress: data?.inProgress ?? 0,
-    upcoming: data?.upcoming_tasks?.length ?? 0,
-    completed: data?.completed ?? 0,
-    snoozed: 0,
+    upcoming:    upcomingCount,
+    completed:   data?.completed ?? 0,
+    snoozed:     snoozedCount,
+  };
+
+  const TABS: Array<{ key: typeof activeTab; label: string }> = [
+    { key: 'today',       label: 'Today' },
+    { key: 'in_progress', label: 'In-Progress' },
+    { key: 'upcoming',    label: 'Upcoming' },
+    { key: 'completed',   label: 'Completed' },
+    { key: 'snoozed',     label: 'Snoozed' },
+  ];
+
+  const ACTIVITY_TABS: Array<{ key: typeof activeActivityTab; label: string }> = [
+    { key: 'ALL',      label: 'All' },
+    { key: 'EMAIL',    label: '✉️ Email' },
+    { key: 'CALL',     label: '📞 Call' },
+    { key: 'LINKEDIN', label: 'in LinkedIn' },
+    { key: 'CUSTOM',   label: '⚙️ Custom' },
+  ];
+
+  const toggleCheck = (id: string) => {
+    setCheckedTasks((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-6">
-      {/* Header Section */}
-      <div className="flex justify-between items-start">
-        <div>
-          <div className="flex items-center gap-3">
-            <img src="/RelantoLogo.svg" alt="Relanto" className="h-6" />
-            <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
-              Sales Command Center
-              <span className="w-2 h-2 rounded-full bg-blue-600 inline-block"></span>
-            </h1>
-          </div>
-          <p className="text-gray-500 mt-1">
-            {remainingHighPriorityToday} high-priority tasks need attention today — {data?.overdue ?? 0} overdue
-          </p>
-        </div>
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={logout}
-            className="text-gray-500 hover:text-gray-700 text-sm font-medium"
-          >
-            Logout
-          </button>
-          <button 
-            onClick={() => router.push('/tasks/create')}
-            className="bg-[#1e293b] text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-slate-800 transition-colors"
-          >
-            <span className="text-lg leading-none">+</span> Create Task
-          </button>
-        </div>
-      </div>
+    <div style={{ fontFamily: "'Inter', system-ui, sans-serif" }} className="min-h-screen bg-[#f8f9fb]">
+      <div className="max-w-[1380px] mx-auto px-6 py-5 space-y-4">
 
-      {/* Action Bar */}
-      <div className="flex items-center gap-4 bg-white p-2 rounded-xl border border-gray-200">
-        <button className="p-2 text-gray-500 hover:bg-gray-50 rounded-lg">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" />
-          </svg>
-        </button>
-        <div className="flex-1 flex items-center gap-2 border-l border-gray-200 pl-4">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400">
-            <circle cx="11" cy="11" r="8" />
-            <path d="M21 21l-4.35-4.35" />
-          </svg>
-          <input 
-            type="text" 
-            placeholder="Search tasks..." 
-            onClick={() => router.push('/tasks')}
-            className="w-full bg-transparent border-0 px-2 py-1.5 outline-none text-sm cursor-pointer"
-            readOnly
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
-        {/* Left Column - Tasks */}
-        <div className="space-y-6">
-          
-          {/* Tabs */}
-          <div className="flex justify-between items-center border-b border-gray-200">
-            <div className="flex gap-6 text-sm font-medium">
-              <button 
-                onClick={() => setActiveTab('today')}
-                className={`pb-3 flex items-center gap-2 transition-colors ${
-                  activeTab === 'today'
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Today 
-                <span className={`py-0.5 px-2 rounded-full text-xs font-medium ${
-                  activeTab === 'today' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-500'
-                }`}>
-                  {tabCounts.today}
-                </span>
-              </button>
-              <button 
-                onClick={() => setActiveTab('in_progress')}
-                className={`pb-3 flex items-center gap-2 transition-colors ${
-                  activeTab === 'in_progress'
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                In Progress 
-                <span className={`py-0.5 px-2 rounded-full text-xs font-medium ${
-                  activeTab === 'in_progress' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-500'
-                }`}>
-                  {tabCounts.in_progress}
-                </span>
-              </button>
-              <button 
-                onClick={() => setActiveTab('upcoming')}
-                className={`pb-3 flex items-center gap-2 transition-colors ${
-                  activeTab === 'upcoming'
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Upcoming
-                <span className={`py-0.5 px-2 rounded-full text-xs font-medium ${
-                  activeTab === 'upcoming' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-500'
-                }`}>
-                  {tabCounts.upcoming}
-                </span>
-              </button>
-              <button 
-                onClick={() => setActiveTab('completed')}
-                className={`pb-3 flex items-center gap-2 transition-colors ${
-                  activeTab === 'completed'
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Completed 
-                <span className={`py-0.5 px-2 rounded-full text-xs font-medium ${
-                  activeTab === 'completed' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-500'
-                }`}>
-                  {tabCounts.completed}
-                </span>
-              </button>
-              <button 
-                onClick={() => setActiveTab('snoozed')}
-                className={`pb-3 flex items-center gap-2 transition-colors ${
-                  activeTab === 'snoozed'
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Snoozed
-              </button>
-            </div>
-            <div className="flex gap-4 text-xs font-medium pb-3">
-              <span className="text-red-500 flex items-center gap-1">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                {data?.overdue ?? 0} overdue
-              </span>
-              <span className="text-gray-400 flex items-center gap-1">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                {todayCount} due today
-              </span>
-            </div>
-          </div>
-
-          {/* Progress */}
-          <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-                Today&apos;s Progress
-              </h3>
-              <span className="text-sm font-medium text-gray-800">{todayCompletedCount}/{todayCount}</span>
-            </div>
-            <div className="w-full bg-gray-100 rounded-full h-2.5 mb-3">
-              <div 
-                className="bg-[#1e293b] h-2.5 rounded-full transition-all duration-500" 
-                style={{ width: `${todayPercentage}%` }}
-              ></div>
-            </div>
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>{remainingHighPriorityToday} high-priority tasks remaining</span>
-              <span>{todayPercentage}% complete</span>
-            </div>
-          </div>
-
-          {/* Dynamic Task List */}
+        {/* ── Header ── */}
+        <div className="flex justify-between items-start">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <h3 className="font-semibold text-gray-800 capitalize">
-                {activeTab.replace('_', ' ')} Tasks
-              </h3>
-              <span className="bg-gray-100 text-gray-500 py-0.5 px-2 rounded-full text-xs font-medium">
-                {displayTasks.length}
+            <div className="flex items-center gap-2.5 mb-0.5">
+              <img src="/RelantoLogo.svg" alt="Relanto" className="h-5 opacity-80" />
+              <h1 className="text-[18px] font-semibold text-gray-900 flex items-center gap-2">
+                Sales Command Center
+                <span className="w-2 h-2 rounded-full bg-blue-600 inline-block" />
+              </h1>
+            </div>
+            <p className="text-[13px] text-gray-500">
+              {highPriorityRemaining} high-priority tasks need{' '}
+              <span className="text-blue-600 underline underline-offset-2 cursor-pointer">attention today</span>
+              {' '}— {atRisk} at risk of slipping
+            </p>
+          </div>
+          <button
+            onClick={() => router.push('/tasks/create')}
+            className="bg-[#1e293b] text-white px-4 py-2 rounded-lg text-[13px] font-medium flex items-center gap-1.5 hover:bg-slate-700 transition-colors shadow-sm"
+          >
+            <span className="text-base leading-none">+</span> Create Task
+          </button>
+        </div>
+
+        {/* ── Search / Filter Bar ── */}
+        <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-3 py-2 shadow-sm">
+          <div className="flex-1 flex items-center gap-2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400 flex-shrink-0">
+              <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+            </svg>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search tasks, contacts, companies..."
+              className="flex-1 bg-transparent border-0 outline-none text-[13px] text-gray-600 placeholder:text-gray-400"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="text-gray-400 hover:text-gray-600 flex-shrink-0"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            )}
+          </div>
+          <div className="flex items-center gap-4 border-l border-gray-200 pl-3 flex-shrink-0">
+            <div className="flex items-center gap-1.5 text-[12px]">
+              <span className="font-medium text-gray-700">Group By</span>
+              <select
+                value={groupBy}
+                onChange={(e) => setGroupBy(e.target.value as typeof groupBy)}
+                className="bg-transparent border-0 outline-none text-[12px] text-gray-600 cursor-pointer pr-1"
+              >
+                <option value="none">None</option>
+                <option value="priority">Priority</option>
+                <option value="type">Type</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-1.5 text-[12px]">
+              <span className="font-medium text-gray-700">Sort By</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                className="bg-transparent border-0 outline-none text-[12px] text-gray-600 cursor-pointer pr-1"
+              >
+                <option value="due_date">Due Date</option>
+                <option value="priority">Priority</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        {/* ── Main Two-Column Layout ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5 items-start">
+
+          {/* ── LEFT COLUMN ── */}
+          <div className="space-y-4">
+
+            {/* Tab Bar */}
+            <div className="flex justify-between items-center border-b border-gray-200">
+              <div className="flex gap-0">
+                {TABS.map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key)}
+                    className={`pb-2.5 px-1 mr-5 flex items-center gap-1.5 text-[13px] font-medium transition-colors ${
+                      activeTab === tab.key
+                        ? 'text-blue-600 border-b-2 border-blue-600'
+                        : 'text-gray-500 hover:text-gray-700 border-b-2 border-transparent'
+                    }`}
+                  >
+                    {tab.label}
+                    {tabCounts[tab.key] > 0 && (
+                      <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
+                        activeTab === tab.key ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-400'
+                      }`}>
+                        {tabCounts[tab.key]}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-4 text-[11px] font-medium pb-2.5">
+                <span className="text-red-500 flex items-center gap-1">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  {atRisk} at risk
+                </span>
+                <span className="text-gray-400 flex items-center gap-1">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  {todayCount} due today
+                </span>
+              </div>
+            </div>
+
+            {/* Today's Progress */}
+            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-[13px] font-semibold text-gray-700 flex items-center gap-2">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400">
+                    <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+                  </svg>
+                  Today&apos;s Progress
+                </h3>
+                <span className="text-[12px] font-semibold text-gray-700">{todayCompletedCount}/{todayCount}</span>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-[6px] mb-2">
+                <div
+                  className="bg-[#1e293b] h-[6px] rounded-full transition-all duration-700"
+                  style={{ width: `${todayPercentage}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-[11px] text-gray-400">
+                {todayCount === 0 ? (
+                  <span className="text-green-600 font-medium">All high-priority tasks complete!</span>
+                ) : (
+                  <span>{highPriorityRemaining} high-priority tasks remaining</span>
+                )}
+                <span>{todayPercentage}% complete</span>
+              </div>
+            </div>
+
+            {/* Task List */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <h3 className="text-[13px] font-semibold text-gray-800 capitalize">
+                  {activeTab === 'in_progress' ? 'High Priority' : activeTab.replace('_', ' ')}
+                </h3>
+                <span className="bg-gray-100 text-gray-500 rounded-full px-2 py-0.5 text-[11px] font-semibold">
+                  {displayTasks.length}
+                </span>
+              </div>
+
+              {displayTasks.length === 0 ? (
+                <div className="bg-white rounded-xl border border-gray-200 p-10 text-center shadow-sm">
+                  <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-300">
+                      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-400 text-[13px]">
+                    {searchQuery ? `No tasks match "${searchQuery}"` : "No tasks here — you're all caught up!"}
+                  </p>
+                  {searchQuery && (
+                    <button onClick={() => setSearchQuery('')} className="mt-2 text-blue-600 text-[12px] hover:underline">
+                      Clear search
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {taskGroups.map((group, gi) => (
+                    <div key={gi}>
+                      {group.label && (
+                        <div className="flex items-center gap-2 mb-2 px-1">
+                          <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">{group.label}</span>
+                          <span className="bg-gray-100 text-gray-400 rounded-full px-1.5 py-0.5 text-[10px] font-semibold">{group.tasks.length}</span>
+                        </div>
+                      )}
+                      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden divide-y divide-gray-100">
+                        {group.tasks.map((task) => {
+                          const isHighPriority = task.priority === 'HIGH' || task.priority === 'URGENT';
+                          const isChecked = checkedTasks.has(task.id);
+                          const accentColor = task.priority === 'URGENT' ? '#ef4444'
+                            : task.priority === 'HIGH' ? '#f97316'
+                            : task.priority === 'MEDIUM' ? '#3b82f6'
+                            : '#9ca3af';
+
+                          return (
+                            <div
+                              key={task.id}
+                              className="flex items-center gap-3 px-4 py-3.5 hover:bg-slate-50 transition-colors relative"
+                              style={{ borderLeft: `3px solid ${isHighPriority ? accentColor : 'transparent'}` }}
+                            >
+                              {/* Checkbox */}
+                              <div className="flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                                <label className="relative flex items-center cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={(e) => { e.stopPropagation(); toggleCheck(task.id); }}
+                                    className="sr-only peer"
+                                  />
+                                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
+                                    isChecked ? 'bg-blue-600 border-blue-600' : 'border-gray-300 bg-white'
+                                  }`}>
+                                    {isChecked && (
+                                      <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
+                                        <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                      </svg>
+                                    )}
+                                  </div>
+                                </label>
+                              </div>
+
+                              {/* Task Type Emoji */}
+                              <div className="flex-shrink-0 w-7 h-7 rounded-md bg-gray-50 border border-gray-100 flex items-center justify-center text-[13px] select-none">
+                                {TASK_TYPE_ICON[task.task_type] || '📋'}
+                              </div>
+
+                              {/* Main Content */}
+                              <div
+                                className="flex-1 min-w-0 cursor-pointer"
+                                onClick={() => router.push(`/tasks/${task.id}`)}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <p className="text-[13px] font-semibold text-gray-900 truncate">
+                                    {task.title}
+                                  </p>
+                                </div>
+                                <div className="flex items-center gap-2 mt-0.5 text-[11px] text-gray-400">
+                                  {task.contact_name && (
+                                    <>
+                                      <span className="font-medium text-gray-600">{task.contact_name}</span>
+                                      <span className="w-1 h-1 rounded-full bg-gray-300" />
+                                    </>
+                                  )}
+                                  {task.description && (
+                                    <span className="truncate max-w-[240px]">{task.description}</span>
+                                  )}
+                                  {task.due_date && (
+                                    <>
+                                      <span className="w-1 h-1 rounded-full bg-gray-300" />
+                                      <span className="flex items-center gap-0.5">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                                        </svg>
+                                        Due {new Date(task.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                      </span>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Right side: priority badge + Take Action */}
+                              <div className="flex items-center gap-2 flex-shrink-0">
+                                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase ${
+                                  task.priority === 'URGENT' ? 'bg-red-50 text-red-600' :
+                                  task.priority === 'HIGH'   ? 'bg-orange-50 text-orange-600' :
+                                  task.priority === 'MEDIUM' ? 'bg-blue-50 text-blue-600' :
+                                  'bg-gray-100 text-gray-500'
+                                }`}>
+                                  {task.priority}
+                                </span>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); router.push(`/tasks/${task.id}`); }}
+                                  className="text-[11px] font-semibold text-gray-700 border border-gray-300 rounded-lg px-3 py-1 hover:bg-gray-50 transition-colors whitespace-nowrap"
+                                >
+                                  Take Action
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ── RIGHT COLUMN – Recent Activity ── */}
+          <div className="space-y-0">
+
+            {/* Activity Tab Bar */}
+            <div className="flex gap-3 border-b border-gray-200 pb-0 mb-4 overflow-x-auto">
+              {ACTIVITY_TABS.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveActivityTab(tab.key)}
+                  className={`pb-2.5 px-0.5 text-[12px] font-medium whitespace-nowrap transition-colors ${
+                    activeActivityTab === tab.key
+                      ? 'text-gray-900 border-b-2 border-gray-900'
+                      : 'text-gray-400 hover:text-gray-600 border-b-2 border-transparent'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Activity Header */}
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-[13px] font-semibold text-gray-800">Recent Activity</h3>
+              <span className="bg-gray-100 text-gray-500 rounded-full px-2 py-0.5 text-[10px] font-semibold">
+                {displayActivities.length}
               </span>
             </div>
-            
-            {displayTasks.length === 0 ? (
+
+            {displayActivities.length === 0 ? (
               <div className="bg-white rounded-xl border border-gray-200 p-8 text-center shadow-sm">
-                <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400">
-                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                  </svg>
-                </div>
-                <h4 className="text-gray-900 font-medium mb-1">No tasks for this category</h4>
-                <p className="text-gray-500 text-sm">You&apos;re all caught up! Enjoy your day.</p>
+                <p className="text-gray-400 text-[13px]">No recent activity</p>
               </div>
             ) : (
-              <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100 overflow-hidden shadow-sm">
-                {displayTasks.map((task) => (
-                  <div 
-                    key={task.id} 
-                    onClick={() => router.push(`/tasks/${task.id}`)}
-                    className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className={`w-2.5 h-2.5 rounded-full ${
-                        task.priority === 'URGENT' ? 'bg-red-500' :
-                        task.priority === 'HIGH' ? 'bg-orange-500' :
-                        task.priority === 'MEDIUM' ? 'bg-blue-500' :
-                        'bg-gray-400'
-                      }`} title={`${task.priority} Priority`} />
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">{task.title}</p>
-                        <p className="text-xs text-gray-500 mt-0.5 truncate max-w-[280px] sm:max-w-md">
-                          {task.description || 'No description provided'}
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm divide-y divide-gray-50 max-h-[520px] overflow-y-auto">
+                {displayActivities.map((activity) => {
+                  const iconInfo = ACTIVITY_TYPE_ICON[activity.activity_type] || ACTIVITY_TYPE_ICON.DEFAULT;
+                  const initials = getInitials(activity.users?.first_name, activity.users?.last_name);
+                  const taskTypeEmoji = activity.tasks ? (TASK_TYPE_ICON[activity.tasks.task_type] || '📋') : null;
+
+                  return (
+                    <div key={activity.id} className="p-3.5 flex gap-3">
+                      {/* Avatar */}
+                      <div className={`flex-shrink-0 w-8 h-8 rounded-full ${iconInfo.bg} flex items-center justify-center text-[11px] font-bold text-gray-600`}>
+                        {initials !== '??' ? initials : <span className="text-[13px]">{iconInfo.emoji}</span>}
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-1">
+                          <div>
+                            <span className="text-[12px] font-semibold text-gray-900">
+                              {activity.users?.first_name} {activity.users?.last_name}
+                            </span>
+                            {activity.tasks && (
+                              <span className="text-[11px] text-gray-400 ml-1">
+                                — {activity.tasks.title}
+                              </span>
+                            )}
+                          </div>
+                          {taskTypeEmoji && (
+                            <span className="text-[13px] flex-shrink-0 ml-1">{taskTypeEmoji}</span>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-gray-500 mt-0.5 line-clamp-2">
+                          {activity.description}
+                          {activity.tasks && (
+                            <span
+                              onClick={() => router.push(`/tasks/${activity.tasks?.id}`)}
+                              className="font-semibold text-blue-600 hover:underline cursor-pointer ml-1"
+                            >
+                              {activity.tasks.title}
+                            </span>
+                          )}
+                        </p>
+                        <p className="text-[10px] text-gray-400 mt-1 flex items-center gap-1">
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                          </svg>
+                          {timeAgo(activity.created_at)}
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className={`px-2.5 py-0.5 text-[10px] font-semibold rounded-full uppercase ${
-                        task.task_type === 'EMAIL' ? 'bg-blue-50 text-blue-700' :
-                        task.task_type === 'CALL' ? 'bg-green-50 text-green-700' :
-                        task.task_type === 'LINKEDIN' ? 'bg-indigo-50 text-indigo-700' :
-                        task.task_type === 'MEETING' ? 'bg-purple-50 text-purple-700' :
-                        task.task_type === 'FOLLOW_UP' ? 'bg-orange-50 text-orange-700' :
-                        'bg-gray-50 text-gray-700'
-                      }`}>
-                        {task.task_type.replace('_', ' ')}
-                      </span>
-                      <span className="text-xs text-gray-400 font-medium">
-                        {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'No due date'}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
-
-        </div>
-
-        {/* Right Column - Recent Activity */}
-        <div>
-          <div className="flex gap-4 text-xs font-medium border-b border-gray-200 pb-3 mb-6">
-            <button 
-              onClick={() => setActiveActivityTab('ALL')}
-              className={`pb-3 -mb-[13px] transition-colors ${
-                activeActivityTab === 'ALL' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              All
-            </button>
-            <button 
-              onClick={() => setActiveActivityTab('EMAIL')}
-              className={`pb-3 -mb-[13px] transition-colors flex items-center gap-1 ${
-                activeActivityTab === 'EMAIL' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              ✉️ Email
-            </button>
-            <button 
-              onClick={() => setActiveActivityTab('CALL')}
-              className={`pb-3 -mb-[13px] transition-colors flex items-center gap-1 ${
-                activeActivityTab === 'CALL' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              📞 Call
-            </button>
-            <button 
-              onClick={() => setActiveActivityTab('LINKEDIN')}
-              className={`pb-3 -mb-[13px] transition-colors flex items-center gap-1 ${
-                activeActivityTab === 'LINKEDIN' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              in LinkedIn
-            </button>
-          </div>
-
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-semibold text-gray-800">Recent Activity</h3>
-            <span className="bg-gray-100 text-gray-500 py-0.5 px-2 rounded-full text-xs font-medium">
-              {displayActivities.length}
-            </span>
-          </div>
-          
-          {displayActivities.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center h-48 flex flex-col items-center justify-center shadow-sm">
-              <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-2">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400">
-                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                </svg>
-              </div>
-              <p className="text-gray-500 text-sm">No recent activity</p>
-            </div>
-          ) : (
-            <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
-              {displayActivities.map((activity) => (
-                <div key={activity.id} className="py-3 flex gap-3 text-left">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-sm">
-                    {activity.activity_type === 'CREATED' ? '🆕' :
-                     activity.activity_type === 'STATUS_CHANGED' ? '🔄' :
-                     activity.activity_type === 'ASSIGNED' ? '👤' :
-                     activity.activity_type === 'NOTE_ADDED' ? '📝' :
-                     '🔧'}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-slate-800">
-                      {activity.users?.first_name} {activity.users?.last_name}
-                    </p>
-                    <p className="text-xs text-slate-600 mt-0.5">
-                      {activity.description} {activity.tasks ? 'for ' : ''}
-                      {activity.tasks && (
-                        <span 
-                          onClick={() => router.push(`/tasks/${activity.tasks?.id}`)}
-                          className="font-semibold text-blue-600 hover:underline cursor-pointer"
-                        >
-                          {activity.tasks.title}
-                        </span>
-                      )}
-                    </p>
-                    <p className="text-[10px] text-slate-400 mt-1">
-                      {new Date(activity.created_at).toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
+
+      {/* ── Bottom Bulk Action Bar ── */}
+      {checkedTasks.size > 0 && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 shadow-xl rounded-full px-6 py-3 flex items-center justify-between gap-8 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="flex items-center gap-3 border-r border-gray-150 pr-6">
+            <button
+              onClick={() => setCheckedTasks(new Set())}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+              title="Clear selection"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+            <span className="text-[13px] font-semibold text-gray-800">
+              {checkedTasks.size} selected
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleBulkComplete}
+              disabled={isBulkActing}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors disabled:opacity-55"
+            >
+              <span>⊙</span>
+              Mark Complete
+            </button>
+
+            <button
+              onClick={() => setOpenDueDateModal(true)}
+              disabled={isBulkActing}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors disabled:opacity-55"
+            >
+              <span>📅</span>
+              Update Due Date
+            </button>
+
+            <button
+              onClick={() => setOpenSnoozeModal(true)}
+              disabled={isBulkActing}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors disabled:opacity-55"
+            >
+              <span>🕒</span>
+              Snooze
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Due Date Modal ── */}
+      {openDueDateModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50 animate-in fade-in duration-200">
+          <div className="bg-white rounded-xl shadow-xl border border-gray-150 p-5 w-full max-w-sm animate-in scale-in duration-200">
+            <h3 className="text-[14px] font-bold text-gray-800 mb-3 flex items-center gap-1.5">
+              <span>📅</span> Update Due Date
+            </h3>
+            <p className="text-[12px] text-gray-500 mb-4">
+              Choose a new due date for the {checkedTasks.size} selected task(s).
+            </p>
+            <input
+              type="date"
+              value={selectedDueDate}
+              onChange={(e) => setSelectedDueDate(e.target.value)}
+              className="w-full border border-gray-250 rounded-lg p-2 text-[13px] outline-none focus:ring-1 focus:ring-blue-500 mb-4 text-gray-700 font-medium"
+            />
+            <div className="flex justify-end gap-2 text-[12px] font-semibold">
+              <button
+                onClick={() => setOpenDueDateModal(false)}
+                className="px-3 py-1.5 text-gray-600 hover:bg-gray-50 border border-gray-250 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleBulkUpdateDueDate(selectedDueDate)}
+                disabled={!selectedDueDate || isBulkActing}
+                className="px-3 py-1.5 bg-[#1e293b] text-white hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-50"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Snooze Modal ── */}
+      {openSnoozeModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50 animate-in fade-in duration-200">
+          <div className="bg-white rounded-xl shadow-xl border border-gray-150 p-5 w-full max-w-xs animate-in scale-in duration-200">
+            <h3 className="text-[14px] font-bold text-gray-800 mb-3 flex items-center gap-1.5">
+              <span>🕒</span> Snooze Tasks
+            </h3>
+            <p className="text-[12px] text-gray-500 mb-4">
+              Select snooze duration for the {checkedTasks.size} selected task(s).
+            </p>
+            <div className="space-y-2 mb-4 text-[13px]">
+              <button
+                onClick={() => handleBulkSnooze(1)}
+                className="w-full text-left px-3 py-2 text-gray-700 hover:bg-slate-50 border border-gray-100 rounded-lg font-medium transition-colors"
+              >
+                🌅 Snooze until Tomorrow
+              </button>
+              <button
+                onClick={() => handleBulkSnooze(3)}
+                className="w-full text-left px-3 py-2 text-gray-700 hover:bg-slate-50 border border-gray-100 rounded-lg font-medium transition-colors"
+              >
+                📅 Snooze for 3 days
+              </button>
+              <button
+                onClick={() => handleBulkSnooze(7)}
+                className="w-full text-left px-3 py-2 text-gray-700 hover:bg-slate-50 border border-gray-100 rounded-lg font-medium transition-colors"
+              >
+                🗓️ Snooze for 1 Week
+              </button>
+            </div>
+            <div className="flex justify-end text-[12px] font-semibold">
+              <button
+                onClick={() => setOpenSnoozeModal(false)}
+                className="px-3 py-1.5 text-gray-600 hover:bg-gray-50 border border-gray-250 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

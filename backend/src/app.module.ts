@@ -10,6 +10,7 @@ import { EmailModule } from './email/email.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ReportsModule } from './reports/reports.module';
 import { SchedulerModule } from './scheduler/scheduler.module';
+import { SalesforceModule } from './salesforce/salesforce.module';
 
 @Module({
   imports: [
@@ -24,6 +25,8 @@ import { SchedulerModule } from './scheduler/scheduler.module';
     NotificationsModule,
     ReportsModule,
     SchedulerModule,
+    SalesforceModule,
   ],
 })
 export class AppModule {}
+

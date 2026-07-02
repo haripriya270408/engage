@@ -1,10 +1,16 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateTaskDto, UpdateTaskDto, TaskFilterDto, CreateNoteDto } from './tasks.dto';
+import { SalesforceService } from '../salesforce/salesforce.service';
 
 @Injectable()
 export class TasksService {
-  constructor(private supabaseService: SupabaseService) {}
+  private readonly logger = new Logger(TasksService.name);
+
+  constructor(
+    private supabaseService: SupabaseService,
+    private salesforceService: SalesforceService,
+  ) {}
 
   async create(dto: CreateTaskDto, userId: string, userRole?: string) {
     const supabase = this.supabaseService.getClient();
@@ -31,7 +37,21 @@ export class TasksService {
       await this.logActivity(data.id, userId, 'ASSIGNED', `Task assigned to user ${assignedTo}`);
     }
 
+    // Sync to Salesforce (fire-and-forget)
+    this.syncCreateToSalesforce(data).catch(err =>
+      this.logger.error(`SF sync failed for new task ${data.id}: ${err.message}`),
+    );
+
     return data;
+  }
+
+  private async syncCreateToSalesforce(task: any): Promise<void> {
+    const sfId = await this.salesforceService.createSFTask(task);
+    if (sfId) {
+      const supabase = this.supabaseService.getClient();
+      await supabase.from('tasks').update({ salesforce_id: sfId }).eq('id', task.id);
+      this.logger.log(`Linked task ${task.id} → SF ${sfId}`);
+    }
   }
 
   async findAll(filters: TaskFilterDto, userId: string, userRole: string) {
@@ -125,17 +145,40 @@ export class TasksService {
       await this.logActivity(id, userId, 'ASSIGNED', `Reassigned to user ${dto.assigned_to}`);
     }
 
+    // Sync update to Salesforce if linked
+    if (data.salesforce_id) {
+      this.salesforceService.updateSFTask(data.salesforce_id, dto).catch(err =>
+        this.logger.error(`SF update sync failed for task ${id}: ${err.message}`),
+      );
+    }
+
     return data;
   }
 
   async delete(id: string) {
     const supabase = this.supabaseService.getClient();
+
+    // Fetch salesforce_id before deleting
+    const { data: task } = await supabase
+      .from('tasks')
+      .select('salesforce_id')
+      .eq('id', id)
+      .maybeSingle();
+
     const { error } = await supabase
       .from('tasks')
       .delete()
       .eq('id', id);
 
     if (error) throw error;
+
+    // Sync deletion to Salesforce if linked
+    if (task?.salesforce_id) {
+      this.salesforceService.deleteSFTask(task.salesforce_id).catch(err =>
+        this.logger.error(`SF delete sync failed for task ${id}: ${err.message}`),
+      );
+    }
+
     return { message: 'Task deleted successfully' };
   }
 
@@ -264,12 +307,13 @@ export class TasksService {
     // MANAGER and ADMIN dashboard
     let query = supabase.from('tasks').select('*');
 
+    let repIds: string[] = [];
     if (userRole === 'MANAGER') {
       const { data: assignments } = await supabase
         .from('manager_rep_assignments')
         .select('rep_id')
         .eq('manager_id', userId);
-      const repIds = (assignments || []).map(a => a.rep_id);
+      repIds = (assignments || []).map(a => a.rep_id);
       repIds.push(userId);
       query = query.in('assigned_to', repIds);
     }
@@ -277,21 +321,79 @@ export class TasksService {
     const { data: tasks } = await query;
     const allTasks = tasks || [];
     const total = allTasks.length;
-    const completed = allTasks.filter(t => t.status === 'COMPLETED').length;
-    const pending = allTasks.filter(t => t.status === 'PENDING').length;
-    const inProgress = allTasks.filter(t => t.status === 'IN_PROGRESS').length;
-    const cancelled = allTasks.filter(t => t.status === 'CANCELLED').length;
     const now = new Date();
-    const overdue = allTasks.filter(t =>
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
+    const completedTasks = allTasks.filter(t => t.status === 'COMPLETED');
+    const pending = allTasks.filter(t => t.status === 'PENDING').length;
+    const inProgressTasks = allTasks.filter(t => t.status === 'IN_PROGRESS');
+    const overdue_tasks = allTasks.filter(t =>
       t.due_date && new Date(t.due_date) <= now &&
       t.status !== 'COMPLETED' && t.status !== 'CANCELLED'
-    ).length;
-
-    const recent_tasks = await this.enrichTasks(
-      allTasks.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5)
     );
 
-    return { total, completed, pending, in_progress: inProgress, overdue, recent_tasks };
+    const todayTasks = allTasks.filter(t => {
+      if (t.status === 'CANCELLED') return false;
+      if (!t.due_date) return false;
+      const d = new Date(t.due_date);
+      const isDueToday = d >= startOfToday && d <= endOfToday;
+      const isOverdue = d < startOfToday && t.status !== 'COMPLETED';
+      return isDueToday || isOverdue;
+    });
+
+    const todayCompleted = todayTasks.filter(t => t.status === 'COMPLETED');
+    const upcomingTasks = allTasks.filter(t => {
+      if (t.status === 'COMPLETED' || t.status === 'CANCELLED') return false;
+      if (!t.due_date) return false;
+      const d = new Date(t.due_date);
+      return d > endOfToday;
+    });
+
+    const enrichedToday = await this.enrichTasks(todayTasks);
+    const enrichedInProgress = await this.enrichTasks(inProgressTasks);
+    const enrichedUpcomingTasks = await this.enrichTasks(upcomingTasks);
+    const enrichedCompletedTasks = await this.enrichTasks(completedTasks);
+
+    const taskIds = allTasks.map(t => t.id);
+    let activities: any[] = [];
+    if (taskIds.length > 0) {
+      const { data: acts } = await supabase
+        .from('task_activities')
+        .select('*, tasks(id, title, task_type), users!task_activities_user_id_fkey(id, email, first_name, last_name)')
+        .in('task_id', taskIds)
+        .order('created_at', { ascending: false })
+        .limit(10);
+      activities = acts || [];
+    }
+
+    // Fetch team reps for manager (for reassign dropdown)
+    let teamReps: any[] = [];
+    if (userRole === 'MANAGER' && repIds.length > 0) {
+      const { data: repsData } = await supabase
+        .from('users')
+        .select('id, first_name, last_name, email')
+        .in('id', repIds);
+      teamReps = repsData || [];
+    }
+
+    return {
+      total,
+      completed: completedTasks.length,
+      pending,
+      inProgress: inProgressTasks.length,
+      overdue: overdue_tasks.length,
+      today_count: todayTasks.length,
+      today_completed_count: todayCompleted.length,
+      today_tasks: enrichedToday,
+      in_progress_tasks: enrichedInProgress,
+      upcoming_tasks: enrichedUpcomingTasks,
+      completed_tasks: enrichedCompletedTasks,
+      activities,
+      team_reps: teamReps,
+      // legacy fields
+      recent_tasks: enrichedToday.slice(0, 5),
+    };
   }
 
   private async enrichTasks(tasks: any[]) {
