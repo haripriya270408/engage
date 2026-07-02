@@ -49,7 +49,11 @@ export default function ProfilePage() {
       setLoadingReminder(true);
       try {
         const { data } = await api.get('/notifications/reminder-settings');
-        setReminder(data);
+        setReminder({
+          enabled: data.enabled ?? false,
+          reminder_time: data.reminder_time ?? '09:00',
+          readonly: data.readonly ?? false
+        });
       } catch {
         // defaults
       } finally {
@@ -77,7 +81,10 @@ export default function ProfilePage() {
     e.preventDefault();
     setSavingReminder(true);
     try {
-      await api.post('/notifications/reminder-settings', reminder);
+      await api.post('/notifications/reminder-settings', {
+        is_enabled: reminder.enabled,
+        reminder_time: reminder.reminder_time,
+      });
       toast.success('Reminder settings saved');
     } catch {
       toast.error('Failed to save reminder settings');

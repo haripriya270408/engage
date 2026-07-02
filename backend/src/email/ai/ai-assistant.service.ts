@@ -8,7 +8,8 @@ export class AiAssistantService {
 
   constructor(private configService: ConfigService) {
     this.openai = new OpenAI({
-      apiKey: this.configService.get<string>('OPENAI_API_KEY'),
+      apiKey: this.configService.get<string>('GROQ_API_KEY'),
+      baseURL: 'https://api.groq.com/openai/v1',
     });
   }
 
@@ -20,7 +21,7 @@ Format the email with subject line (prefixed with "Subject:") and body.`;
 
     try {
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: 'llama-3.3-70b-versatile',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: prompt },
@@ -48,7 +49,7 @@ ${originalEmail}
 Format the reply with "Subject:" line and body.`;
 
     const response = await this.openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'llama-3.3-70b-versatile',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: prompt },
@@ -66,7 +67,7 @@ Format the reply with "Subject:" line and body.`;
 
   async suggestTaskDescription(taskTitle: string, taskType: string) {
     const response = await this.openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'llama-3.3-70b-versatile',
       messages: [
         {
           role: 'system',
