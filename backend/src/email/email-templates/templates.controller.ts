@@ -12,13 +12,15 @@ export class TemplatesController {
   constructor(private templatesService: TemplatesService) {}
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'MANAGER')
   async create(@Body() dto: CreateEmailTemplateDto, @CurrentUser() user: { sub: string }) {
     return this.templatesService.create(dto, user.sub);
   }
 
   @Get()
-  async findAll(@CurrentUser() user: { sub: string }) {
-    return this.templatesService.findAll(user.sub);
+  async findAll(@CurrentUser() user: { sub: string; role: string }) {
+    return this.templatesService.findAll(user.sub, user.role);
   }
 
   @Get(':id')
@@ -27,6 +29,8 @@ export class TemplatesController {
   }
 
   @Patch(':id')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'MANAGER')
   async update(@Param('id') id: string, @Body() dto: UpdateEmailTemplateDto) {
     return this.templatesService.update(id, dto);
   }

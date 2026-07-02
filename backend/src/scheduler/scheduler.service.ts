@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { SupabaseService } from '../supabase/supabase.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { OutlookService } from '../email/outlook/outlook.service';
 
 @Injectable()
 export class SchedulerService {
@@ -10,44 +11,87 @@ export class SchedulerService {
   constructor(
     private supabaseService: SupabaseService,
     private notificationsService: NotificationsService,
+    private outlookService: OutlookService,
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_9AM)
-  async sendDailyReminders() {
-    this.logger.log('Sending daily reminders...');
+  @Cron(CronExpression.EVERY_30_MINUTES)
+  async sendDailyTaskEmails() {
+    this.logger.log('Checking manager reminder settings...');
     const supabase = this.supabaseService.getClient();
+    const now = new Date();
+    const currentHHMM = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const today = now.toISOString().split('T')[0];
 
     const { data: settings } = await supabase
       .from('daily_reminder_settings')
-      .select('*, users!daily_reminder_settings_user_id_fkey(email, first_name, last_name)')
+      .select('*')
       .eq('is_enabled', true);
 
     if (!settings) return;
 
     for (const setting of settings) {
-      const today = new Date().toISOString().split('T')[0];
+      if (setting.reminder_time.slice(0, 5) !== currentHHMM) continue;
 
-      const { count } = await supabase
-        .from('tasks')
-        .select('*', { count: 'exact', head: true })
-        .eq('assigned_to', setting.user_id)
-        .in('status', ['PENDING', 'IN_PROGRESS'])
-        .lte('due_date', `${today}T23:59:59Z`);
+      const lastSent = setting.last_sent_at ? setting.last_sent_at.split('T')[0] : '';
+      if (lastSent === today) continue;
 
-      if (count && count > 0) {
-        await this.notificationsService.create({
-          user_id: setting.user_id,
-          title: 'Daily Task Reminder',
-          message: `You have ${count} pending task(s) due soon.`,
-          type: 'reminder',
-          link: '/tasks',
-        });
+      const { data: manager } = await supabase
+        .from('users')
+        .select('id, email, first_name, last_name, role')
+        .eq('id', setting.user_id)
+        .single();
 
-        await supabase
-          .from('daily_reminder_settings')
-          .update({ last_sent_at: new Date().toISOString() })
-          .eq('id', setting.id);
+      if (!manager || manager.role !== 'MANAGER') continue;
+
+      const { data: assignments } = await supabase
+        .from('manager_rep_assignments')
+        .select('rep_id')
+        .eq('manager_id', manager.id);
+
+      const repIds = (assignments || []).map(a => a.rep_id);
+      if (repIds.length === 0) continue;
+
+      const { data: reps } = await supabase
+        .from('users')
+        .select('id, email, first_name, last_name')
+        .in('id', repIds);
+
+      for (const rep of reps || []) {
+        const { data: tasks } = await supabase
+          .from('tasks')
+          .select('title, status, priority, due_date')
+          .eq('assigned_to', rep.id)
+          .in('status', ['PENDING', 'IN_PROGRESS']);
+
+        if (!tasks || tasks.length === 0) continue;
+
+        const taskList = tasks.map(t =>
+          `- ${t.title} [${t.priority}] (Due: ${t.due_date ? new Date(t.due_date).toLocaleDateString() : 'No due date'})`
+        ).join('\n');
+
+        const subject = `Daily Task Summary - ${new Date().toLocaleDateString()}`;
+        const body = `
+          <p>Hi ${rep.first_name},</p>
+          <p>Here are your tasks for today:</p>
+          <pre>${taskList}</pre>
+          <p>Regards,<br/>${manager.first_name} ${manager.last_name}</p>
+        `.trim();
+
+        try {
+          await this.outlookService.sendEmail(
+            { subject, body, to_emails: [rep.email] },
+            manager.id,
+          );
+          this.logger.log(`Sent daily task email to ${rep.email} from ${manager.email}`);
+        } catch (err: any) {
+          this.logger.error(`Failed to send email to ${rep.email}: ${err.message}`);
+        }
       }
+
+      await supabase
+        .from('daily_reminder_settings')
+        .update({ last_sent_at: now.toISOString() })
+        .eq('id', setting.id);
     }
   }
 

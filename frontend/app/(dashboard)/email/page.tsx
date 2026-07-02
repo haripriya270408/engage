@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import { useAuth } from '@/lib/auth-context';
 
 const TABS = ['Compose', 'Templates', 'Outlook Settings'] as const;
 type Tab = (typeof TABS)[number];
@@ -15,6 +16,7 @@ interface Template {
 }
 
 export default function EmailPage() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>('Compose');
 
   const [subject, setSubject] = useState('');
@@ -275,12 +277,14 @@ export default function EmailPage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-medium text-foreground">Email Templates</h2>
-            <button
-              onClick={() => setShowTemplateForm(!showTemplateForm)}
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover"
-            >
-              {showTemplateForm ? 'Cancel' : 'New Template'}
-            </button>
+            {user?.role !== 'REP' && (
+              <button
+                onClick={() => setShowTemplateForm(!showTemplateForm)}
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover"
+              >
+                {showTemplateForm ? 'Cancel' : 'New Template'}
+              </button>
+            )}
           </div>
 
           {showTemplateForm && (

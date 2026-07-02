@@ -22,16 +22,14 @@ const navItems: Record<string, NavItem[]> = {
     { label: 'Dashboard', href: '/dashboard/manager' },
     { label: 'My Team', href: '/teams/my-team' },
     { label: 'Tasks', href: '/tasks' },
-    { label: 'Reports', href: '/reports' },
     { label: 'Email', href: '/email' },
-    { label: 'Notifications', href: '/notifications' },
+    { label: 'Reports', href: '/reports' },
     { label: 'Profile', href: '/profile' },
   ],
   REP: [
     { label: 'Dashboard', href: '/dashboard/rep' },
     { label: 'My Tasks', href: '/tasks' },
     { label: 'Email', href: '/email' },
-    { label: 'Notifications', href: '/notifications' },
     { label: 'Profile', href: '/profile' },
   ],
 };

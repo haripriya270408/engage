@@ -35,12 +35,12 @@ interface Activity {
   created_at: string;
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  PENDING: 'bg-yellow-400',
-  IN_PROGRESS: 'bg-blue-400',
-  COMPLETED: 'bg-green-400',
-  CANCELLED: 'bg-gray-400',
-};
+  const STATUS_BADGES: Record<string, string> = {
+    PENDING: 'bg-yellow-100 text-yellow-800',
+    IN_PROGRESS: 'bg-blue-100 text-blue-800',
+    COMPLETED: 'bg-green-100 text-green-800',
+    CANCELLED: 'bg-gray-100 text-gray-500',
+  };
 
 export default function ReportsPage() {
   const { user } = useAuth();
@@ -105,12 +105,7 @@ export default function ReportsPage() {
     load();
   }, [startDate, endDate, activityFilter, isManager]);
 
-  const maxStatusValue = taskSummary
-    ? Math.max(...Object.values(taskSummary.byStatus), 1)
-    : 1;
-  const maxTypeValue = taskSummary
-    ? Math.max(...Object.values(taskSummary.byType), 1)
-    : 1;
+
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
@@ -138,50 +133,33 @@ export default function ReportsPage() {
       </div>
 
       <div className="mb-6 grid gap-6 lg:grid-cols-2">
-        <div className="rounded-xl border border-border bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-medium text-foreground">Task Summary</h2>
+        <div className="rounded-xl border border-border bg-white p-5 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold text-foreground uppercase tracking-wide">Task Summary</h2>
           {loadingSummary ? (
-            <div className="flex justify-center py-8">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            <div className="flex justify-center py-6">
+              <div className="h-6 w-6 animate-spin rounded-full border-4 border-primary border-t-transparent" />
             </div>
           ) : !taskSummary ? (
             <p className="text-sm text-muted">No data available</p>
           ) : (
-            <div className="space-y-4">
-              <p className="text-3xl font-bold text-foreground">{taskSummary.total}</p>
-              <div>
-                <p className="mb-2 text-sm font-medium text-muted">By Status</p>
+            <div className="space-y-3">
+              <p className="text-xl font-bold text-foreground">{taskSummary.total} total</p>
+              <div className="flex flex-wrap gap-1.5">
                 {Object.entries(taskSummary.byStatus).map(([status, count]) => (
-                  <div key={status} className="mb-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-foreground">{status.replace('_', ' ')}</span>
-                      <span className="text-muted">{count}</span>
-                    </div>
-                    <div className="mt-1 h-3 w-full overflow-hidden rounded-full bg-gray-100">
-                      <div
-                        className={`h-full rounded-full ${STATUS_COLORS[status] || 'bg-primary'} transition-all`}
-                        style={{ width: `${(count / maxStatusValue) * 100}%` }}
-                      />
-                    </div>
-                  </div>
+                  <span key={status} className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_BADGES[status] || 'bg-gray-100 text-gray-700'}`}>
+                    {status.replace('_', ' ')} {count}
+                  </span>
                 ))}
               </div>
-              <div>
-                <p className="mb-2 text-sm font-medium text-muted">By Type</p>
-                {Object.entries(taskSummary.byType).map(([type, count]) => (
-                  <div key={type} className="mb-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-foreground">{type}</span>
-                      <span className="text-muted">{count}</span>
-                    </div>
-                    <div className="mt-1 h-3 w-full overflow-hidden rounded-full bg-gray-100">
-                      <div
-                        className="h-full rounded-full bg-primary transition-all"
-                        style={{ width: `${(count / maxTypeValue) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
+              <div className="pt-1">
+                <p className="mb-1.5 text-xs font-medium text-muted">By Type</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {Object.entries(taskSummary.byType).map(([type, count]) => (
+                    <span key={type} className="inline-flex items-center rounded-md bg-gray-50 px-2 py-0.5 text-xs text-muted">
+                      {type} <span className="ml-1 font-semibold text-foreground">{count}</span>
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           )}

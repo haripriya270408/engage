@@ -2,6 +2,8 @@ import { Controller, Get, Post, Patch, Param, Query, Body, UseGuards } from '@ne
 import { NotificationsService } from './notifications.service';
 import { ReminderSettingsDto } from './notifications.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @Controller('notifications')
@@ -34,11 +36,13 @@ export class NotificationsController {
   }
 
   @Get('reminder-settings')
-  async getReminderSettings(@CurrentUser() user: { sub: string }) {
-    return this.notificationsService.getReminderSettings(user.sub);
+  async getReminderSettings(@CurrentUser() user: { sub: string; role: string }) {
+    return this.notificationsService.getReminderSettings(user.sub, user.role);
   }
 
   @Post('reminder-settings')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'MANAGER')
   async upsertReminderSettings(
     @CurrentUser() user: { sub: string },
     @Body() dto: ReminderSettingsDto,

@@ -78,8 +78,25 @@ export class NotificationsService {
     return data;
   }
 
-  async getReminderSettings(userId: string) {
+  async getReminderSettings(userId: string, userRole: string) {
     const supabase = this.supabaseService.getClient();
+    if (userRole === 'REP') {
+      const { data: assignments } = await supabase
+        .from('manager_rep_assignments')
+        .select('manager_id')
+        .eq('rep_id', userId)
+        .maybeSingle();
+      if (assignments) {
+        const { data, error } = await supabase
+          .from('daily_reminder_settings')
+          .select('*')
+          .eq('user_id', assignments.manager_id)
+          .maybeSingle();
+        if (error) throw error;
+        return data ? { enabled: data.is_enabled, reminder_time: data.reminder_time, readonly: true } : null;
+      }
+      return null;
+    }
     const { data, error } = await supabase
       .from('daily_reminder_settings')
       .select('*')
@@ -87,7 +104,8 @@ export class NotificationsService {
       .maybeSingle();
 
     if (error) throw error;
-    return data || null;
+    if (!data) return null;
+    return { enabled: data.is_enabled, reminder_time: data.reminder_time };
   }
 
   async upsertReminderSettings(userId: string, dto: ReminderSettingsDto) {

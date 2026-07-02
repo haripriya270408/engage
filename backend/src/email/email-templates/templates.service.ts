@@ -17,13 +17,27 @@ export class TemplatesService {
     return data;
   }
 
-  async findAll(userId: string) {
+  async findAll(userId: string, userRole: string) {
     const supabase = this.supabaseService.getClient();
-    const { data, error } = await supabase
-      .from('email_templates')
-      .select('*')
-      .or(`is_shared.eq.true,created_by.eq.${userId}`)
-      .order('created_at', { ascending: false });
+    let query = supabase.from('email_templates').select('*');
+
+    if (userRole === 'REP') {
+      const { data: assignments } = await supabase
+        .from('manager_rep_assignments')
+        .select('manager_id')
+        .eq('rep_id', userId)
+        .maybeSingle();
+
+      if (assignments) {
+        query = query.or(`created_by.eq.${assignments.manager_id},is_shared.eq.true`);
+      } else {
+        query = query.eq('is_shared', true);
+      }
+    } else {
+      query = query.or(`is_shared.eq.true,created_by.eq.${userId}`);
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
   }
