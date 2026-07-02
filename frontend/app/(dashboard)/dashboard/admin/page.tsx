@@ -46,7 +46,7 @@ export default function AdminDashboard() {
       return;
     }
     if (!loading && user && user.role !== 'ADMIN') {
-      const target = user.role === 'MANAGER' ? '/dashboard/manager' : '/dashboard/rep';
+      const target = user.role === 'MANAGER' ? '/dashboard/manager' : '/dashboard';
       router.push(target);
       return;
     }
@@ -55,12 +55,19 @@ export default function AdminDashboard() {
     }
   }, [loading, user, router]);
 
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   const fetchDashboard = async () => {
     try {
+      console.log('Fetching admin dashboard data...');
       const { data: res } = await api.get('/admin/dashboard');
+      console.log('Dashboard data:', res);
       setData(res);
-    } catch {
-      toast.error('Failed to load dashboard data');
+    } catch (err: any) {
+      console.error('Fetch dashboard error:', err);
+      const msg = err.message || 'Failed to load dashboard data';
+      setErrorMsg(msg);
+      toast.error(msg);
     } finally {
       setPageLoading(false);
     }
@@ -99,7 +106,20 @@ export default function AdminDashboard() {
   if (loading || pageLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-gray-500">Loading admin dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (errorMsg) {
+    return (
+      <div className="p-8 text-center">
+        <h2 className="text-red-600 text-xl font-semibold mb-2">Error Loading Dashboard</h2>
+        <p className="text-gray-600">{errorMsg}</p>
+        <button onClick={fetchDashboard} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded">Retry</button>
       </div>
     );
   }

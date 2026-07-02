@@ -27,6 +27,17 @@ export default function TeamsPage() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [pageLoading, setPageLoading] = useState(true);
 
+  const fetchTeams = async () => {
+    try {
+      const { data } = await api.get('/teams/all');
+      setTeams(data || []);
+    } catch {
+      toast.error('Failed to load teams');
+    } finally {
+      setPageLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
@@ -40,17 +51,6 @@ export default function TeamsPage() {
       fetchTeams();
     }
   }, [loading, user, router]);
-
-  const fetchTeams = async () => {
-    try {
-      const { data } = await api.get('/teams/all');
-      setTeams(data || []);
-    } catch {
-      toast.error('Failed to load teams');
-    } finally {
-      setPageLoading(false);
-    }
-  };
 
   if (loading || pageLoading) {
     return (

@@ -42,3 +42,15 @@ export class AuthResponse {
     status: string;
   };
 }
+
+export class MicrosoftLoginDto {
+  @IsString()
+  code: string;
+
+  @IsString()
+  codeVerifier: string;
+
+  @IsOptional()
+  @IsEnum(['MANAGER', 'REP'])
+  role?: 'MANAGER' | 'REP';
+}

@@ -47,7 +47,7 @@ export default function ManagerDashboard() {
       return;
     }
     if (!loading && user && user.role === 'REP') {
-      router.push('/dashboard/rep');
+      router.push('/dashboard');
       return;
     }
     if (!loading && user) {

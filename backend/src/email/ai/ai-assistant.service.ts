@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 
@@ -18,21 +18,25 @@ ${tone ? `Use a ${tone} tone.` : 'Use a professional tone.'}
 ${context ? `Context: ${context}` : ''}
 Format the email with subject line (prefixed with "Subject:") and body.`;
 
-    const response = await this.openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: prompt },
-      ],
-      max_tokens: 1000,
-    });
+    try {
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: prompt },
+        ],
+        max_tokens: 1000,
+      });
 
-    const content = response.choices[0]?.message?.content || '';
-    const subjectMatch = content.match(/Subject:\s*(.+)/i);
-    const subject = subjectMatch ? subjectMatch[1].trim() : 'No subject';
-    const body = content.replace(/Subject:\s*.+/i, '').trim();
+      const content = response.choices[0]?.message?.content || '';
+      const subjectMatch = content.match(/Subject:\s*(.+)/i);
+      const subject = subjectMatch ? subjectMatch[1].trim() : 'No subject';
+      const body = content.replace(/Subject:\s*.+/i, '').trim();
 
-    return { subject, body };
+      return { subject, body };
+    } catch (error: any) {
+      throw new BadRequestException(`OpenAI Error: ${error.message}`);
+    }
   }
 
   async replyToEmail(originalEmail: string, prompt: string, tone?: string) {

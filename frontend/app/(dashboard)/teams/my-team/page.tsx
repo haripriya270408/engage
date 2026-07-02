@@ -26,20 +26,6 @@ export default function MyTeamPage() {
   const [team, setTeam] = useState<TeamData | null>(null);
   const [pageLoading, setPageLoading] = useState(true);
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
-      return;
-    }
-    if (!loading && user && user.role !== 'MANAGER') {
-      router.push('/dashboard/admin');
-      return;
-    }
-    if (!loading && user) {
-      fetchTeam();
-    }
-  }, [loading, user, router]);
-
   const fetchTeam = async () => {
     try {
       const { data } = await api.get('/teams/my-team');
@@ -50,6 +36,20 @@ export default function MyTeamPage() {
       setPageLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+      return;
+    }
+    if (!loading && user && user.role === 'ADMIN') {
+      router.push('/dashboard/admin');
+      return;
+    }
+    if (!loading && user) {
+      fetchTeam();
+    }
+  }, [loading, user, router]);
 
   if (loading || pageLoading) {
     return (

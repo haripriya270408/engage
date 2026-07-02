@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 
@@ -22,14 +23,14 @@ const navItems: Record<string, NavItem[]> = {
     { label: 'Dashboard', href: '/dashboard/manager' },
     { label: 'My Team', href: '/teams/my-team' },
     { label: 'Tasks', href: '/tasks' },
-    { label: 'Email', href: '/email' },
+    { label: 'Email', href: '/email-workspace' },
     { label: 'Reports', href: '/reports' },
     { label: 'Profile', href: '/profile' },
   ],
   REP: [
-    { label: 'Dashboard', href: '/dashboard/rep' },
+    { label: 'Dashboard', href: '/dashboard' },
     { label: 'My Tasks', href: '/tasks' },
-    { label: 'Email', href: '/email' },
+    { label: 'Email', href: '/email-workspace' },
     { label: 'Profile', href: '/profile' },
   ],
 };
@@ -49,7 +50,10 @@ export default function Sidebar() {
     >
       <div className="flex items-center justify-between h-16 px-4 border-b border-border">
         {!collapsed && (
-          <span className="text-lg font-semibold text-foreground">Engage</span>
+          <div className="flex items-center gap-2">
+            <Image src="/RelantoLogo.svg" alt="Relanto Logo" width={32} height={32} />
+            <span className="text-lg font-semibold text-foreground">Engage</span>
+          </div>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}

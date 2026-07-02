@@ -6,6 +6,7 @@ import Link from 'next/link';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
+import EmailComposerModal from '@/components/email-composer-modal';
 
 const TASK_TYPES = ['EMAIL', 'CALL', 'LINKEDIN', 'MEETING', 'FOLLOW_UP', 'OTHER'] as const;
 const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'] as const;
@@ -102,6 +103,7 @@ export default function TaskDetailPage() {
 
   const [newNote, setNewNote] = useState('');
   const [addingNote, setAddingNote] = useState(false);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
   const fetchTask = async () => {
     try {
@@ -265,6 +267,17 @@ export default function TaskDetailPage() {
           <h1 className="text-2xl font-semibold text-gray-900">{editing ? 'Edit Task' : task.title}</h1>
         </div>
         <div className="flex items-center gap-2">
+          {!editing && task.task_type === 'EMAIL' && (
+            <button
+              onClick={() => setIsEmailModalOpen(true)}
+              className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 flex items-center gap-2"
+            >
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              Email Contact
+            </button>
+          )}
           {!editing && (
             <button
               onClick={() => { setEditing(true); router.replace(`/tasks/${id}?edit=true`); }}
@@ -491,6 +504,13 @@ export default function TaskDetailPage() {
           </div>
         </>
       )}
+
+      <EmailComposerModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        initialTo={task.contact_email || ''}
+        taskContext={`${task.title} - ${task.description || ''}`}
+      />
     </div>
   );
 }
