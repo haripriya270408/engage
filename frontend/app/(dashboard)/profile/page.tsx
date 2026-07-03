@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import api from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 import toast from 'react-hot-toast';
@@ -11,7 +12,9 @@ interface ReminderSettings {
   readonly?: boolean;
 }
 
-export default function ProfilePage() {
+import { Suspense } from 'react';
+
+function ProfileContent() {
   const { user } = useAuth();
 
   const [firstName, setFirstName] = useState('');
@@ -23,7 +26,11 @@ export default function ProfilePage() {
   const [loadingReminder, setLoadingReminder] = useState(false);
   const [savingReminder, setSavingReminder] = useState(false);
 
+  const [salesforceStatus, setSalesforceStatus] = useState<boolean | null>(null);
+  const [loadingSalesforce, setLoadingSalesforce] = useState(false);
+
   const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -63,6 +70,29 @@ export default function ProfilePage() {
     fetchReminder();
   }, []);
 
+  useEffect(() => {
+    const sfParam = searchParams.get('salesforce');
+    if (sfParam === 'success') {
+      toast.success('Successfully connected to Salesforce');
+      // Remove query param to prevent toast on refresh
+      window.history.replaceState(null, '', '/profile');
+    } else if (sfParam === 'error') {
+      const msg = searchParams.get('message');
+      toast.error(`Salesforce connection failed: ${msg || 'Unknown error'}`);
+      window.history.replaceState(null, '', '/profile');
+    }
+
+    const fetchSalesforceStatus = async () => {
+      try {
+        const { data } = await api.get('/salesforce/status');
+        setSalesforceStatus(data.connected);
+      } catch {
+        setSalesforceStatus(false);
+      }
+    };
+    fetchSalesforceStatus();
+  }, [searchParams]);
+
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -90,6 +120,30 @@ export default function ProfilePage() {
       toast.error('Failed to save reminder settings');
     } finally {
       setSavingReminder(false);
+    }
+  };
+
+  const handleConnectSalesforce = async () => {
+    setLoadingSalesforce(true);
+    try {
+      const { data } = await api.get('/salesforce/auth-url');
+      window.location.href = data.url;
+    } catch {
+      toast.error('Failed to get Salesforce connection URL');
+      setLoadingSalesforce(false);
+    }
+  };
+
+  const handleDisconnectSalesforce = async () => {
+    setLoadingSalesforce(true);
+    try {
+      await api.delete('/salesforce/disconnect');
+      setSalesforceStatus(false);
+      toast.success('Successfully disconnected from Salesforce');
+    } catch {
+      toast.error('Failed to disconnect from Salesforce');
+    } finally {
+      setLoadingSalesforce(false);
     }
   };
 
@@ -220,6 +274,58 @@ export default function ProfilePage() {
           )}
         </div>
       )}
+
+      {/* Salesforce Integration Section */}
+      <div className="mt-6 rounded-xl border border-border bg-white p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-medium text-foreground">Integrations</h2>
+        <div className="flex items-center justify-between rounded-lg bg-gray-50 p-4">
+          <div>
+            <p className="text-sm font-medium text-foreground">Salesforce CRM</p>
+            <p className="text-xs text-muted mt-1">
+              Connect your personal Salesforce account to enable automatic two-way task synchronization.
+            </p>
+          </div>
+          <div className="flex flex-col items-end">
+            {salesforceStatus === null ? (
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            ) : salesforceStatus ? (
+              <div className="flex flex-col items-end gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                  <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                  Connected
+                </span>
+                <button
+                  onClick={handleDisconnectSalesforce}
+                  disabled={loadingSalesforce}
+                  className="text-xs font-medium text-red-600 hover:text-red-700 hover:underline disabled:opacity-50"
+                >
+                  {loadingSalesforce ? 'Disconnecting...' : 'Disconnect'}
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleConnectSalesforce}
+                disabled={loadingSalesforce}
+                className="rounded-lg bg-[#00A1E0] px-4 py-2 text-sm font-medium text-white hover:bg-[#008fcc] disabled:opacity-50"
+              >
+                {loadingSalesforce ? 'Connecting...' : 'Connect to Salesforce'}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    }>
+      <ProfileContent />
+    </Suspense>
   );
 }

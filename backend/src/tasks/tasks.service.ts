@@ -38,15 +38,15 @@ export class TasksService {
     }
 
     // Sync to Salesforce (fire-and-forget)
-    this.syncCreateToSalesforce(data).catch(err =>
+    this.syncCreateToSalesforce(data, userId).catch(err =>
       this.logger.error(`SF sync failed for new task ${data.id}: ${err.message}`),
     );
 
     return data;
   }
 
-  private async syncCreateToSalesforce(task: any): Promise<void> {
-    const sfId = await this.salesforceService.createSFTask(task);
+  private async syncCreateToSalesforce(task: any, userId: string): Promise<void> {
+    const sfId = await this.salesforceService.createSFTask(userId, task);
     if (sfId) {
       const supabase = this.supabaseService.getClient();
       await supabase.from('tasks').update({ salesforce_id: sfId }).eq('id', task.id);
@@ -145,10 +145,16 @@ export class TasksService {
       await this.logActivity(id, userId, 'ASSIGNED', `Reassigned to user ${dto.assigned_to}`);
     }
 
-    // Sync update to Salesforce if linked
+    // Sync to Salesforce
     if (data.salesforce_id) {
-      this.salesforceService.updateSFTask(data.salesforce_id, dto).catch(err =>
+      // Task already exists in SF — update it
+      this.salesforceService.updateSFTask(userId, data.salesforce_id, dto).catch(err =>
         this.logger.error(`SF update sync failed for task ${id}: ${err.message}`),
+      );
+    } else {
+      // Task doesn't exist in SF yet — create it (with the current/updated status)
+      this.syncCreateToSalesforce({ ...data, ...dto }, userId).catch(err =>
+        this.logger.error(`SF create sync failed for task ${id}: ${err.message}`),
       );
     }
 
@@ -158,10 +164,10 @@ export class TasksService {
   async delete(id: string) {
     const supabase = this.supabaseService.getClient();
 
-    // Fetch salesforce_id before deleting
+    // Fetch salesforce_id and created_by before deleting
     const { data: task } = await supabase
       .from('tasks')
-      .select('salesforce_id')
+      .select('salesforce_id, created_by')
       .eq('id', id)
       .maybeSingle();
 
@@ -172,9 +178,9 @@ export class TasksService {
 
     if (error) throw error;
 
-    // Sync deletion to Salesforce if linked
-    if (task?.salesforce_id) {
-      this.salesforceService.deleteSFTask(task.salesforce_id).catch(err =>
+    // Sync deletion to Salesforce if linked using the task creator's SF connection
+    if (task?.salesforce_id && task?.created_by) {
+      this.salesforceService.deleteSFTask(task.created_by, task.salesforce_id).catch(err =>
         this.logger.error(`SF delete sync failed for task ${id}: ${err.message}`),
       );
     }
