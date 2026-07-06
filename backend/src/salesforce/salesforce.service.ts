@@ -408,25 +408,31 @@ export class SalesforceService {
     try {
       const supabase = this.supabaseService.getClient();
 
-      // Get all local tasks for this user that have a salesforce_id
+      // Get all local tasks that have a salesforce_id
       const { data: localLinkedTasks } = await supabase
         .from('tasks')
         .select('id, salesforce_id, title')
-        .not('salesforce_id', 'is', null)
-        .or(`created_by.eq.${userId},assigned_to.eq.${userId}`);
+        .not('salesforce_id', 'is', null);
 
       if (!localLinkedTasks || localLinkedTasks.length === 0) return;
 
-      // Batch check: query Salesforce for all the linked SF IDs to see which still exist
-      const sfIds = localLinkedTasks.map(t => `'${t.salesforce_id}'`).join(',');
-      const soql = `SELECT Id FROM Task WHERE Id IN (${sfIds})`;
-
-      let existingIds: Set<string>;
+      // Batch check: query Salesforce for all the linked SF IDs in chunks of 100
+      const existingIds = new Set<string>();
+      const chunkSize = 100;
+      
       try {
-        const result = await this.sfRequest(userId, 'GET', `/services/data/v57.0/query?q=${encodeURIComponent(soql)}`);
-        existingIds = new Set((result.records || []).map((r: any) => r.Id));
-      } catch {
-        // If the query fails, skip deletion sync for this cycle
+        for (let i = 0; i < localLinkedTasks.length; i += chunkSize) {
+          const chunk = localLinkedTasks.slice(i, i + chunkSize);
+          const sfIds = chunk.map(t => `'${t.salesforce_id}'`).join(',');
+          const soql = `SELECT Id FROM Task WHERE Id IN (${sfIds})`;
+          
+          const result = await this.sfRequest(userId, 'GET', `/services/data/v57.0/query?q=${encodeURIComponent(soql)}`);
+          if (result && result.records) {
+            result.records.forEach((r: any) => existingIds.add(r.Id));
+          }
+        }
+      } catch (err: any) {
+        this.logger.error(`Failed to query Salesforce for existing tasks: ${err.message}`);
         return;
       }
 
