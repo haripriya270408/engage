@@ -61,12 +61,12 @@ const TASK_TYPE_ICON: Record<string, string> = {
 };
 
 const ACTIVITY_TYPE_ICON: Record<string, { bg: string; emoji: string }> = {
-  CREATED:       { bg: 'bg-blue-100',   emoji: '🆕' },
-  STATUS_CHANGED:{ bg: 'bg-yellow-100', emoji: '🔄' },
-  ASSIGNED:      { bg: 'bg-purple-100', emoji: '👤' },
-  NOTE_ADDED:    { bg: 'bg-green-100',  emoji: '📝' },
-  email_sent:    { bg: 'bg-blue-100',   emoji: '✉️' },
-  DEFAULT:       { bg: 'bg-gray-100',   emoji: '🔧' },
+  CREATED: { bg: 'bg-blue-100', emoji: '🆕' },
+  STATUS_CHANGED: { bg: 'bg-yellow-100', emoji: '🔄' },
+  ASSIGNED: { bg: 'bg-purple-100', emoji: '👤' },
+  NOTE_ADDED: { bg: 'bg-green-100', emoji: '📝' },
+  email_sent: { bg: 'bg-blue-100', emoji: '✉️' },
+  DEFAULT: { bg: 'bg-gray-100', emoji: '🔧' },
 };
 
 function getInitials(firstName?: string, lastName?: string) {
@@ -105,7 +105,7 @@ export default function DashboardPage() {
       const current = JSON.parse(localStorage.getItem('snoozed_task_ids') || '[]');
       const filtered = current.filter((id: string) => !idsToRemove.includes(id));
       localStorage.setItem('snoozed_task_ids', JSON.stringify(filtered));
-    } catch {}
+    } catch { }
   };
 
   const handleBulkComplete = async () => {
@@ -164,13 +164,13 @@ export default function DashboardPage() {
           api.patch(`/tasks/${taskId}`, { due_date: newDueDate.toISOString() })
         )
       );
-      
+
       // Save to localStorage
       try {
         const snoozedIds = JSON.parse(localStorage.getItem('snoozed_task_ids') || '[]');
         const newSnoozedIds = Array.from(new Set([...snoozedIds, ...idsArray]));
         localStorage.setItem('snoozed_task_ids', JSON.stringify(newSnoozedIds));
-      } catch {}
+      } catch { }
 
       toast.success(`Snoozed ${checkedTasks.size} task(s)!`, { id: loadingToast });
       setCheckedTasks(new Set());
@@ -232,13 +232,13 @@ export default function DashboardPage() {
     const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
     switch (activeTab) {
-      case 'today':       return data.today_tasks || [];
+      case 'today': return data.today_tasks || [];
       case 'in_progress': return data.in_progress_tasks || [];
       case 'upcoming': {
         const upcomingTasks = data.upcoming_tasks || [];
         return upcomingTasks.filter(t => !snoozedIdsSet.has(t.id));
       }
-      case 'completed':   return data.completed_tasks || [];
+      case 'completed': return data.completed_tasks || [];
       case 'snoozed': {
         const allPotentialTasks = [
           ...(data.today_tasks || []),
@@ -247,12 +247,12 @@ export default function DashboardPage() {
         ];
         const uniqueTasksMap = new Map<string, Task>();
         allPotentialTasks.forEach(t => uniqueTasksMap.set(t.id, t));
-        
-        return Array.from(uniqueTasksMap.values()).filter(t => 
+
+        return Array.from(uniqueTasksMap.values()).filter(t =>
           snoozedIdsSet.has(t.id) && t.due_date && new Date(t.due_date) > endOfToday
         );
       }
-      default:            return [];
+      default: return [];
     }
   };
 
@@ -287,8 +287,8 @@ export default function DashboardPage() {
       groups[key].push(t);
     });
     const ordered = groupBy === 'priority'
-      ? ['URGENT','HIGH','MEDIUM','LOW']
-      : ['EMAIL','CALL','LINKEDIN','MEETING','FOLLOW_UP','OTHER'];
+      ? ['URGENT', 'HIGH', 'MEDIUM', 'LOW']
+      : ['EMAIL', 'CALL', 'LINKEDIN', 'MEETING', 'FOLLOW_UP', 'OTHER'];
     return ordered.filter((k) => groups[k]).map((k) => ({ label: k, tasks: groups[k] }));
   };
 
@@ -334,27 +334,27 @@ export default function DashboardPage() {
   const upcomingCount = (data?.upcoming_tasks || []).filter(t => !snoozedIdsSet.has(t.id)).length;
 
   const tabCounts = {
-    today:       todayCount,
+    today: todayCount,
     in_progress: data?.inProgress ?? 0,
-    upcoming:    upcomingCount,
-    completed:   data?.completed ?? 0,
-    snoozed:     snoozedCount,
+    upcoming: upcomingCount,
+    completed: data?.completed ?? 0,
+    snoozed: snoozedCount,
   };
 
   const TABS: Array<{ key: typeof activeTab; label: string }> = [
-    { key: 'today',       label: 'Today' },
+    { key: 'today', label: 'Today' },
     { key: 'in_progress', label: 'In-Progress' },
-    { key: 'upcoming',    label: 'Upcoming' },
-    { key: 'completed',   label: 'Completed' },
-    { key: 'snoozed',     label: 'Snoozed' },
+    { key: 'upcoming', label: 'Upcoming' },
+    { key: 'completed', label: 'Completed' },
+    { key: 'snoozed', label: 'Snoozed' },
   ];
 
   const ACTIVITY_TABS: Array<{ key: typeof activeActivityTab; label: string }> = [
-    { key: 'ALL',      label: 'All' },
-    { key: 'EMAIL',    label: '✉️ Email' },
-    { key: 'CALL',     label: '📞 Call' },
+    { key: 'ALL', label: 'All' },
+    { key: 'EMAIL', label: '✉️ Email' },
+    { key: 'CALL', label: '📞 Call' },
     { key: 'LINKEDIN', label: 'in LinkedIn' },
-    { key: 'CUSTOM',   label: '⚙️ Custom' },
+    { key: 'CUSTOM', label: '⚙️ Custom' },
   ];
 
   const toggleCheck = (id: string) => {
@@ -367,7 +367,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div style={{ fontFamily: "'Inter', system-ui, sans-serif" }} className="min-h-screen bg-[#f8f9fb]">
+    <div className="min-h-full bg-[#f8f9fb]">
       <div className="max-w-[1380px] mx-auto px-6 py-5 space-y-4">
 
         {/* ── Header ── */}
@@ -413,7 +413,7 @@ export default function DashboardPage() {
                 className="text-gray-400 hover:text-gray-600 flex-shrink-0"
               >
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </button>
             )}
@@ -459,17 +459,15 @@ export default function DashboardPage() {
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
-                    className={`pb-2.5 px-1 mr-5 flex items-center gap-1.5 text-[13px] font-medium transition-colors ${
-                      activeTab === tab.key
+                    className={`pb-2.5 px-1 mr-5 flex items-center gap-1.5 text-[13px] font-medium transition-colors ${activeTab === tab.key
                         ? 'text-blue-600 border-b-2 border-blue-600'
                         : 'text-gray-500 hover:text-gray-700 border-b-2 border-transparent'
-                    }`}
+                      }`}
                   >
                     {tab.label}
                     {tabCounts[tab.key] > 0 && (
-                      <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
-                        activeTab === tab.key ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-400'
-                      }`}>
+                      <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${activeTab === tab.key ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-400'
+                        }`}>
                         {tabCounts[tab.key]}
                       </span>
                     )}
@@ -479,13 +477,13 @@ export default function DashboardPage() {
               <div className="flex gap-4 text-[11px] font-medium pb-2.5">
                 <span className="text-red-500 flex items-center gap-1">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                    <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
                   </svg>
                   {atRisk} at risk
                 </span>
                 <span className="text-gray-400 flex items-center gap-1">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
                   </svg>
                   {todayCount} due today
                 </span>
@@ -497,7 +495,7 @@ export default function DashboardPage() {
               <div className="flex justify-between items-center mb-3">
                 <h3 className="text-[13px] font-semibold text-gray-700 flex items-center gap-2">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400">
-                    <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+                    <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
                   </svg>
                   Today&apos;s Progress
                 </h3>
@@ -556,20 +554,20 @@ export default function DashboardPage() {
                           <span className="bg-gray-100 text-gray-400 rounded-full px-1.5 py-0.5 text-[10px] font-semibold">{group.tasks.length}</span>
                         </div>
                       )}
-                      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden divide-y divide-gray-100">
+                      <div className="flex flex-col gap-3">
                         {group.tasks.map((task) => {
                           const isHighPriority = task.priority === 'HIGH' || task.priority === 'URGENT';
                           const isChecked = checkedTasks.has(task.id);
                           const accentColor = task.priority === 'URGENT' ? '#ef4444'
                             : task.priority === 'HIGH' ? '#f97316'
-                            : task.priority === 'MEDIUM' ? '#3b82f6'
-                            : '#9ca3af';
+                              : task.priority === 'MEDIUM' ? '#3b82f6'
+                                : '#ef4444';
 
                           return (
                             <div
                               key={task.id}
-                              className="flex items-center gap-3 px-4 py-3.5 hover:bg-slate-50 transition-colors relative"
-                              style={{ borderLeft: `3px solid ${isHighPriority ? accentColor : 'transparent'}` }}
+                              className="flex items-center gap-3 px-4 py-3.5 bg-white rounded-xl border border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all relative overflow-hidden"
+                              style={{ borderLeft: `4px solid ${accentColor}` }}
                             >
                               {/* Checkbox */}
                               <div className="flex-shrink-0" onClick={(e) => e.stopPropagation()}>
@@ -580,12 +578,11 @@ export default function DashboardPage() {
                                     onChange={(e) => { e.stopPropagation(); toggleCheck(task.id); }}
                                     className="sr-only peer"
                                   />
-                                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
-                                    isChecked ? 'bg-blue-600 border-blue-600' : 'border-gray-300 bg-white'
-                                  }`}>
+                                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${isChecked ? 'bg-blue-600 border-blue-600' : 'border-gray-300 bg-white'
+                                    }`}>
                                     {isChecked && (
                                       <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
-                                        <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                        <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                       </svg>
                                     )}
                                   </div>
@@ -622,7 +619,7 @@ export default function DashboardPage() {
                                       <span className="w-1 h-1 rounded-full bg-gray-300" />
                                       <span className="flex items-center gap-0.5">
                                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                                          <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
                                         </svg>
                                         Due {new Date(task.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                       </span>
@@ -633,12 +630,11 @@ export default function DashboardPage() {
 
                               {/* Right side: priority badge + Take Action */}
                               <div className="flex items-center gap-2 flex-shrink-0">
-                                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase ${
-                                  task.priority === 'URGENT' ? 'bg-red-50 text-red-600' :
-                                  task.priority === 'HIGH'   ? 'bg-orange-50 text-orange-600' :
-                                  task.priority === 'MEDIUM' ? 'bg-blue-50 text-blue-600' :
-                                  'bg-gray-100 text-gray-500'
-                                }`}>
+                                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase ${task.priority === 'URGENT' ? 'bg-red-50 text-red-600' :
+                                    task.priority === 'HIGH' ? 'bg-orange-50 text-orange-600' :
+                                      task.priority === 'MEDIUM' ? 'bg-blue-50 text-blue-600' :
+                                        'bg-gray-100 text-gray-500'
+                                  }`}>
                                   {task.priority}
                                 </span>
                                 <button
@@ -668,11 +664,10 @@ export default function DashboardPage() {
                 <button
                   key={tab.key}
                   onClick={() => setActiveActivityTab(tab.key)}
-                  className={`pb-2.5 px-0.5 text-[12px] font-medium whitespace-nowrap transition-colors ${
-                    activeActivityTab === tab.key
+                  className={`pb-2.5 px-0.5 text-[12px] font-medium whitespace-nowrap transition-colors ${activeActivityTab === tab.key
                       ? 'text-gray-900 border-b-2 border-gray-900'
                       : 'text-gray-400 hover:text-gray-600 border-b-2 border-transparent'
-                  }`}
+                    }`}
                 >
                   {tab.label}
                 </button>
@@ -735,7 +730,7 @@ export default function DashboardPage() {
                         </p>
                         <p className="text-[10px] text-gray-400 mt-1 flex items-center gap-1">
                           <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                            <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
                           </svg>
                           {timeAgo(activity.created_at)}
                         </p>

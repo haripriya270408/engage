@@ -10,7 +10,7 @@ export class TasksService {
   constructor(
     private supabaseService: SupabaseService,
     private salesforceService: SalesforceService,
-  ) {}
+  ) { }
 
   async create(dto: CreateTaskDto, userId: string, userRole?: string) {
     const supabase = this.supabaseService.getClient();
@@ -145,16 +145,10 @@ export class TasksService {
       await this.logActivity(id, userId, 'ASSIGNED', `Reassigned to user ${dto.assigned_to}`);
     }
 
-    // Sync to Salesforce
+    // Sync update to Salesforce if linked
     if (data.salesforce_id) {
-      // Task already exists in SF — update it
       this.salesforceService.updateSFTask(userId, data.salesforce_id, dto).catch(err =>
         this.logger.error(`SF update sync failed for task ${id}: ${err.message}`),
-      );
-    } else {
-      // Task doesn't exist in SF yet — create it (with the current/updated status)
-      this.syncCreateToSalesforce({ ...data, ...dto }, userId).catch(err =>
-        this.logger.error(`SF create sync failed for task ${id}: ${err.message}`),
       );
     }
 

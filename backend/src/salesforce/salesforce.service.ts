@@ -390,9 +390,70 @@ export class SalesforceService {
             }
           }
         }
+
+        // ── Check for deleted SF tasks ──
+        await this.syncDeletedSFTasks(userId);
+
       } catch (err: any) {
         this.logger.error(`Salesforce poll error for user ${userId}: ${err.message}`);
       }
+    }
+  }
+
+  /**
+   * Detect tasks deleted in Salesforce and remove them locally.
+   * Uses Salesforce's queryAll endpoint with IsDeleted = true.
+   */
+  private async syncDeletedSFTasks(userId: string): Promise<void> {
+    try {
+      const supabase = this.supabaseService.getClient();
+
+      // Get all local tasks for this user that have a salesforce_id
+      const { data: localLinkedTasks } = await supabase
+        .from('tasks')
+        .select('id, salesforce_id, title')
+        .not('salesforce_id', 'is', null)
+        .or(`created_by.eq.${userId},assigned_to.eq.${userId}`);
+
+      if (!localLinkedTasks || localLinkedTasks.length === 0) return;
+
+      // Batch check: query Salesforce for all the linked SF IDs to see which still exist
+      const sfIds = localLinkedTasks.map(t => `'${t.salesforce_id}'`).join(',');
+      const soql = `SELECT Id FROM Task WHERE Id IN (${sfIds})`;
+
+      let existingIds: Set<string>;
+      try {
+        const result = await this.sfRequest(userId, 'GET', `/services/data/v57.0/query?q=${encodeURIComponent(soql)}`);
+        existingIds = new Set((result.records || []).map((r: any) => r.Id));
+      } catch {
+        // If the query fails, skip deletion sync for this cycle
+        return;
+      }
+
+      // Any local task whose salesforce_id is NOT in the existing set has been deleted in SF
+      const deletedLocally: string[] = [];
+      for (const localTask of localLinkedTasks) {
+        if (!existingIds.has(localTask.salesforce_id)) {
+          deletedLocally.push(localTask.id);
+          this.logger.log(`SF task ${localTask.salesforce_id} ("${localTask.title}") deleted in Salesforce — removing local task ${localTask.id}`);
+        }
+      }
+
+      if (deletedLocally.length > 0) {
+        // Delete the corresponding local tasks
+        const { error: deleteError } = await supabase
+          .from('tasks')
+          .delete()
+          .in('id', deletedLocally);
+
+        if (deleteError) {
+          this.logger.error(`Failed to delete local tasks synced from SF for user ${userId}: ${deleteError.message}`);
+        } else {
+          this.logger.log(`Deleted ${deletedLocally.length} local task(s) that were removed in Salesforce (User: ${userId})`);
+        }
+      }
+    } catch (err: any) {
+      this.logger.error(`SF deletion sync error for user ${userId}: ${err.message}`);
     }
   }
 }

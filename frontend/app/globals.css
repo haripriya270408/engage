@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@300;400;600&family=Hanken+Grotesk:wght@500;600;700&family=Source+Sans+Pro:wght@300;400;600&family=Source+Code+Pro:wght@400;500&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -14,6 +15,11 @@
   --muted: #6b7280;
   --card: #ffffff;
   --card-border: #f3f4f6;
+
+  --font-serif: 'Source Serif Pro', serif;
+  --font-sans: 'Source Sans Pro', sans-serif;
+  --font-mono: 'Source Code Pro', monospace;
+  --font-accent: 'Hanken Grotesk', sans-serif;
 }
 
 @theme inline {
@@ -30,12 +36,23 @@
   --color-muted: var(--muted);
   --color-card: var(--card);
   --color-card-border: var(--card-border);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-serif: var(--font-serif);
+  --font-accent: var(--font-accent);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  min-height: 100vh;
+@layer base {
+  * {
+    font-family: var(--font-sans);
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif) !important;
+  }
 }

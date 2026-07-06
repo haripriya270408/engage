@@ -287,7 +287,7 @@ export default function ManagerDashboard() {
   };
 
   return (
-    <div style={{ fontFamily: "'Inter', system-ui, sans-serif" }} className="min-h-screen bg-[#f8f9fb]">
+    <div className="min-h-screen bg-[#f8f9fb]">
       <div className="max-w-[1380px] mx-auto px-6 py-5 space-y-4">
 
         {/* ── Header ── */}
