@@ -304,7 +304,8 @@ export class SalesforceService {
 
   // ─── Salesforce → Local Sync (Polling) ─────────────────────────────
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  // Sync changes from Salesforce every 15 seconds instead of every 5 minutes
+  @Cron('*/15 * * * * *')
   async pollSalesforceUpdates(): Promise<void> {
     this.logger.log('Polling Salesforce for task updates for all connected users...');
     const supabase = this.supabaseService.getClient();
