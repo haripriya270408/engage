@@ -325,7 +325,7 @@ export class SalesforceService {
       try {
         // We will fetch tasks modified in the last 24 hours
         const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-        const soql = `SELECT Id, Subject, Description, Status, Priority, ActivityDate, LastModifiedDate FROM Task WHERE LastModifiedDate > ${since} ORDER BY LastModifiedDate DESC LIMIT 200`;
+        const soql = `SELECT Id, Subject, Description, Status, Priority, ActivityDate, LastModifiedDate, TaskSubtype FROM Task WHERE LastModifiedDate > ${since} ORDER BY LastModifiedDate DESC LIMIT 200`;
 
         const result = await this.sfRequest(userId, 'GET', `/services/data/v57.0/query?q=${encodeURIComponent(soql)}`);
         const sfTasks = result.records || [];
@@ -364,11 +364,22 @@ export class SalesforceService {
 
             this.logger.log(`Synced SF task ${sfTask.Id} → local task ${existing.id} (User: ${userId})`);
           } else {
+            let inferredType = 'OTHER';
+            if (sfTask.TaskSubtype === 'Call') inferredType = 'CALL';
+            else if (sfTask.TaskSubtype === 'Email') inferredType = 'EMAIL';
+            else if (sfTask.TaskSubtype === 'LinkedIn') inferredType = 'LINKEDIN';
+            else {
+              const subj = (sfTask.Subject || '').toLowerCase();
+              if (subj.includes('call')) inferredType = 'CALL';
+              else if (subj.includes('email') || subj.includes('mail')) inferredType = 'EMAIL';
+              else if (subj.includes('linkedin')) inferredType = 'LINKEDIN';
+            }
+
             // Create a new task assigned to this user
             const newTask = {
               title: sfTask.Subject || 'Untitled Salesforce Task',
               description: sfTask.Description || '',
-              task_type: 'OTHER',
+              task_type: inferredType,
               status: localStatus,
               priority: localPriority,
               due_date: localDueDate,
