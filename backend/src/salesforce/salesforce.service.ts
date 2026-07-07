@@ -326,8 +326,12 @@ export class SalesforceService {
       try {
         // We will fetch tasks modified in the last 24 hours
         const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+<<<<<<< HEAD
         // Fetch extended fields: Who (Contact/Lead name), What (Opportunity/Related-To name), and the Opportunity's Account Name
         const soql = `SELECT Id, Subject, Description, Status, Priority, ActivityDate, LastModifiedDate, Who.Name, What.Name, What.Type, What.Account.Name FROM Task WHERE LastModifiedDate > ${since} ORDER BY LastModifiedDate DESC LIMIT 200`;
+=======
+        const soql = `SELECT Id, Subject, Description, Status, Priority, ActivityDate, LastModifiedDate, TaskSubtype FROM Task WHERE LastModifiedDate > ${since} ORDER BY LastModifiedDate DESC LIMIT 200`;
+>>>>>>> 9ad4020863d7426cc1631c1dbbd359aed201f63d
 
         const result = await this.sfRequest(userId, 'GET', `/services/data/v57.0/query?q=${encodeURIComponent(soql)}`);
         const sfTasks = result.records || [];
@@ -373,6 +377,17 @@ export class SalesforceService {
 
             this.logger.log(`Synced SF task ${sfTask.Id} → local task ${existing.id} (User: ${userId})`);
           } else {
+            let inferredType = 'OTHER';
+            if (sfTask.TaskSubtype === 'Call') inferredType = 'CALL';
+            else if (sfTask.TaskSubtype === 'Email') inferredType = 'EMAIL';
+            else if (sfTask.TaskSubtype === 'LinkedIn') inferredType = 'LINKEDIN';
+            else {
+              const subj = (sfTask.Subject || '').toLowerCase();
+              if (subj.includes('call')) inferredType = 'CALL';
+              else if (subj.includes('email') || subj.includes('mail')) inferredType = 'EMAIL';
+              else if (subj.includes('linkedin')) inferredType = 'LINKEDIN';
+            }
+
             // Create a new task assigned to this user
             const accountName = sfTask.What?.Account?.Name || null;
             const opportunityName = sfTask.What?.Name || null;
@@ -380,7 +395,7 @@ export class SalesforceService {
             const newTask: any = {
               title: sfTask.Subject || 'Untitled Salesforce Task',
               description: sfTask.Description || '',
-              task_type: 'OTHER',
+              task_type: inferredType,
               status: localStatus,
               priority: localPriority,
               due_date: localDueDate,
