@@ -26,12 +26,14 @@ interface Task {
   contact_email: string | null;
   contact_phone: string | null;
   company_name: string | null;
+  sf_who_name: string | null;
   linkedin_url: string | null;
   meeting_link: string | null;
   location: string | null;
   note: string | null;
   is_recurring: boolean;
   recurring_interval: string | null;
+  salesforce_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -424,10 +426,11 @@ export default function TaskDetailPage() {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div><span className="font-medium text-gray-500">Assigned To:</span> {task.assigned_to ? `${task.assigned_to.first_name} ${task.assigned_to.last_name}` : 'Unassigned'}</div>
               <div><span className="font-medium text-gray-500">Due Date:</span> {task.due_date ? new Date(task.due_date).toLocaleString() : 'Not set'}</div>
-              {task.contact_name && <div><span className="font-medium text-gray-500">Contact:</span> {task.contact_name}</div>}
+              {task.contact_name && <div><span className="font-medium text-gray-500">Related To:</span> {task.contact_name}</div>}
+              {task.company_name && <div><span className="font-medium text-gray-500">Account Name:</span> {task.company_name}</div>}
+              {task.sf_who_name && <div><span className="font-medium text-gray-500">Contact (Who):</span> {task.sf_who_name}</div>}
               {task.contact_email && <div><span className="font-medium text-gray-500">Email:</span> {task.contact_email}</div>}
               {task.contact_phone && <div><span className="font-medium text-gray-500">Phone:</span> {task.contact_phone}</div>}
-              {task.company_name && <div><span className="font-medium text-gray-500">Company:</span> {task.company_name}</div>}
               {task.linkedin_url && (
                 <div><span className="font-medium text-gray-500">LinkedIn:</span> <a href={task.linkedin_url} target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline">{task.linkedin_url}</a></div>
               )}
@@ -440,6 +443,37 @@ export default function TaskDetailPage() {
                 <div className="col-span-2"><span className="font-medium text-gray-500">Note:</span> {task.note}</div>
               )}
             </div>
+
+            {/* Salesforce Details Banner */}
+            {task.salesforce_id && (task.company_name || task.contact_name || task.sf_who_name) && (
+              <div className="mt-5 rounded-lg border border-blue-100 bg-blue-50 p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-blue-600" stroke="currentColor" strokeWidth="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12l3 3 5-5" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <span className="text-[12px] font-semibold text-blue-700">Salesforce Details</span>
+                  <span className="ml-auto text-[10px] text-blue-400 font-mono">{task.salesforce_id}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                  {task.company_name && (
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-semibold text-blue-500 uppercase tracking-wide">Account Name</span>
+                      <span className="text-[13px] font-medium text-gray-800">{task.company_name}</span>
+                    </div>
+                  )}
+                  {task.contact_name && (
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-semibold text-blue-500 uppercase tracking-wide">Related To (Opportunity)</span>
+                      <span className="text-[13px] font-medium text-gray-800">{task.contact_name}</span>
+                    </div>
+                  )}
+                  {task.sf_who_name && (
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-semibold text-blue-500 uppercase tracking-wide">Name (Who)</span>
+                      <span className="text-[13px] font-medium text-gray-800">{task.sf_who_name}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="mt-4 border-t border-gray-100 pt-3 text-xs text-gray-400">
               Created: {new Date(task.created_at).toLocaleString()} &middot; Updated: {new Date(task.updated_at).toLocaleString()}

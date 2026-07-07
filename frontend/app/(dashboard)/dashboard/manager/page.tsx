@@ -19,6 +19,7 @@ interface Task {
   contact_name?: string;
   contact_email?: string;
   company_name?: string;
+  sf_who_name?: string;
   assigned_to?: UserRef | null;
   assigned_by?: UserRef | null;
   created_by?: UserRef | null;
@@ -541,27 +542,32 @@ export default function ManagerDashboard() {
                                   </p>
                                 </div>
                                 <div className="flex items-center gap-2 mt-0.5 text-[11px] text-gray-400">
-                                  {task.contact_name && (
+                                  {/* Account Name (company_name) • Opportunity Name (contact_name) */}
+                                  {task.company_name && (
                                     <>
-                                      <span className="font-medium text-gray-600">{task.contact_name}</span>
-                                      <span className="w-1 h-1 rounded-full bg-gray-300" />
+                                      <span className="font-medium text-gray-600">{task.company_name}</span>
+                                      {task.contact_name && <span className="w-1 h-1 rounded-full bg-gray-300 flex-shrink-0" />}
                                     </>
+                                  )}
+                                  {task.contact_name && (
+                                    <span className="text-gray-500 truncate max-w-[120px]">{task.contact_name}</span>
+                                  )}
+                                  {(task.company_name || task.contact_name) && task.assigned_to && (
+                                    <span className="w-1 h-1 rounded-full bg-gray-300 flex-shrink-0" />
                                   )}
                                   {task.assigned_to && (
                                     <>
                                       <span className="text-gray-500">→ {task.assigned_to.first_name} {task.assigned_to.last_name}</span>
-                                      <span className="w-1 h-1 rounded-full bg-gray-300" />
+                                      {task.due_date && <span className="w-1 h-1 rounded-full bg-gray-300 flex-shrink-0" />}
                                     </>
                                   )}
                                   {task.due_date && (
-                                    <>
-                                      <span className="flex items-center gap-0.5">
-                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                                        </svg>
-                                        Due {new Date(task.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                      </span>
-                                    </>
+                                    <span className="flex items-center gap-0.5">
+                                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                                      </svg>
+                                      Due {new Date(task.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                    </span>
                                   )}
                                 </div>
                               </div>

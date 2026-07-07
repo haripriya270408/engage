@@ -326,7 +326,8 @@ export class SalesforceService {
       try {
         // We will fetch tasks modified in the last 24 hours
         const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-        const soql = `SELECT Id, Subject, Description, Status, Priority, ActivityDate, LastModifiedDate FROM Task WHERE LastModifiedDate > ${since} ORDER BY LastModifiedDate DESC LIMIT 200`;
+        // Fetch extended fields: Who (Contact/Lead name), What (Opportunity/Related-To name), and the Opportunity's Account Name
+        const soql = `SELECT Id, Subject, Description, Status, Priority, ActivityDate, LastModifiedDate, Who.Name, What.Name, What.Type, What.Account.Name FROM Task WHERE LastModifiedDate > ${since} ORDER BY LastModifiedDate DESC LIMIT 200`;
 
         const result = await this.sfRequest(userId, 'GET', `/services/data/v57.0/query?q=${encodeURIComponent(soql)}`);
         const sfTasks = result.records || [];
@@ -357,6 +358,13 @@ export class SalesforceService {
               updated_at: new Date().toISOString(),
             };
             if (sfTask.Description) updatePayload.description = sfTask.Description;
+            // Sync Account Name → company_name, Opportunity/Related-To Name → contact_name, Contact Name → sf_who_name
+            const accountName = sfTask.What?.Account?.Name || sfTask.What?.Name || null;
+            const opportunityName = sfTask.What?.Name || null;
+            const whoName = sfTask.Who?.Name || null;
+            if (accountName) updatePayload.company_name = accountName;
+            if (opportunityName) updatePayload.contact_name = opportunityName;
+            if (whoName) updatePayload.sf_who_name = whoName;
 
             await supabase
               .from('tasks')
@@ -366,7 +374,10 @@ export class SalesforceService {
             this.logger.log(`Synced SF task ${sfTask.Id} → local task ${existing.id} (User: ${userId})`);
           } else {
             // Create a new task assigned to this user
-            const newTask = {
+            const accountName = sfTask.What?.Account?.Name || null;
+            const opportunityName = sfTask.What?.Name || null;
+            const whoName = sfTask.Who?.Name || null;
+            const newTask: any = {
               title: sfTask.Subject || 'Untitled Salesforce Task',
               description: sfTask.Description || '',
               task_type: 'OTHER',
@@ -376,6 +387,10 @@ export class SalesforceService {
               created_by: userId,
               assigned_to: userId,
               salesforce_id: sfTask.Id,
+              // Salesforce relational fields
+              company_name: accountName,
+              contact_name: opportunityName,
+              sf_who_name: whoName,
             };
 
             const { data: inserted, error: insertError } = await supabase

@@ -15,6 +15,8 @@ interface Task {
   priority: string;
   due_date: string;
   contact_name?: string;
+  company_name?: string;
+  sf_who_name?: string;
   assigned_to_user?: { first_name: string; last_name: string; email: string };
 }
 
@@ -605,18 +607,24 @@ export default function DashboardPage() {
                                   </p>
                                 </div>
                                 <div className="flex items-center gap-2 mt-0.5 text-[11px] text-gray-400">
-                                  {task.contact_name && (
+                                  {/* Account Name (company_name) • Opportunity Name (contact_name) */}
+                                  {task.company_name && (
                                     <>
-                                      <span className="font-medium text-gray-600">{task.contact_name}</span>
-                                      <span className="w-1 h-1 rounded-full bg-gray-300" />
+                                      <span className="font-medium text-gray-600">{task.company_name}</span>
+                                      {task.contact_name && <span className="w-1 h-1 rounded-full bg-gray-300 flex-shrink-0" />}
                                     </>
                                   )}
-                                  {task.description && (
+                                  {task.contact_name && (
+                                    <span className="text-gray-500 truncate max-w-[140px]">{task.contact_name}</span>
+                                  )}
+                                  {(task.company_name || task.contact_name) && task.due_date && (
+                                    <span className="w-1 h-1 rounded-full bg-gray-300 flex-shrink-0" />
+                                  )}
+                                  {!task.company_name && !task.contact_name && task.description && (
                                     <span className="truncate max-w-[240px]">{task.description}</span>
                                   )}
                                   {task.due_date && (
                                     <>
-                                      <span className="w-1 h-1 rounded-full bg-gray-300" />
                                       <span className="flex items-center gap-0.5">
                                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                           <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
