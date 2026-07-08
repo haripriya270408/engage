@@ -27,6 +27,7 @@ function ProfileContent() {
   const [savingReminder, setSavingReminder] = useState(false);
 
   const [salesforceStatus, setSalesforceStatus] = useState<boolean | null>(null);
+  const [salesforceAccountId, setSalesforceAccountId] = useState<string | null>(null);
   const [loadingSalesforce, setLoadingSalesforce] = useState(false);
 
   const [loading, setLoading] = useState(true);
@@ -86,8 +87,10 @@ function ProfileContent() {
       try {
         const { data } = await api.get('/salesforce/status');
         setSalesforceStatus(data.connected);
+        setSalesforceAccountId(data.accountId || null);
       } catch {
         setSalesforceStatus(false);
+        setSalesforceAccountId(null);
       }
     };
     fetchSalesforceStatus();
@@ -294,6 +297,9 @@ function ProfileContent() {
                   <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
                   Connected
                 </span>
+                {salesforceAccountId && (
+                  <span className="text-xs text-gray-500">{salesforceAccountId}</span>
+                )}
                 <button
                   onClick={handleDisconnectSalesforce}
                   disabled={loadingSalesforce}

@@ -276,9 +276,10 @@ function TasksPageContent() {
                     >
                       View
                     </button>
+                    {/* Teams, Zoom, and Mail links removed as requested */}
                     <button
                       onClick={() => router.push(`/tasks/${task.id}?edit=true`)}
-                      className="mr-3 text-gray-500 hover:text-gray-800"
+                      className="mr-3 text-gray-600 hover:underline"
                     >
                       Edit
                     </button>

@@ -1,0 +1,905 @@
+
+> backend@0.0.1 start:dev
+> nest start --watch
+
+[2J[3J[H[[90m4:55:44 PM[0m] Starting compilation in watch mode...
+
+[[90m4:55:49 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +11ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSupabaseModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSchedulerModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTeamsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReportsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSalesforceModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTasksModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +48ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/register, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/microsoft, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/microsoft/url, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/managers, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/reps, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/profile, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminController {/api/admin}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/approve-user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/reject-user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/pending-approvals, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/assign-rep, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/assignments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTeamsController {/api/teams}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/assign, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/unassign/:managerId/:repId, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/my-team, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/manager/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/all, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTasksController {/api/tasks}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks, GET} route[39m[38;5;3m +6ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/dashboard, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/notes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/notes, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/activities, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSalesforceController {/api/salesforce}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/auth-url, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/disconnect, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/salesforce/callback, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/opportunities, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTemplatesController {/api/email/templates}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOutlookController {/api/email/outlook}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/outlook/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/outlook/send, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEmailController {/api/email}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/ai/compose, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/ai/suggest-task, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotificationsController {/api/notifications}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/unread-count, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/:id/read, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/mark-all-read, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/reminder-settings, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/reminder-settings, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReportsController {/api/reports}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/task-summary, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/rep-performance, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/user-activity, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/email-stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63840  - [39m07/07/2026, 4:55:51 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +17ms[39m
+[2J[3J[H[[90m5:01:54 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m5:01:55 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +10ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSupabaseModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSchedulerModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTeamsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReportsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSalesforceModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTasksModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +55ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/register, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/microsoft, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/microsoft/url, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/managers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/reps, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/profile, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminController {/api/admin}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/approve-user, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/reject-user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/pending-approvals, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/assign-rep, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/assignments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTeamsController {/api/teams}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/assign, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/unassign/:managerId/:repId, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/my-team, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/manager/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/all, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTasksController {/api/tasks}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/notes, GET} route[39m[38;5;3m +6ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/notes, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/activities, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSalesforceController {/api/salesforce}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/auth-url, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/disconnect, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/salesforce/callback, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/opportunities, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTemplatesController {/api/email/templates}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOutlookController {/api/email/outlook}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/outlook/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/outlook/send, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEmailController {/api/email}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/ai/compose, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/ai/suggest-task, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotificationsController {/api/notifications}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/unread-count, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/:id/read, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/mark-all-read, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/reminder-settings, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/reminder-settings, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReportsController {/api/reports}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/task-summary, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/rep-performance, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/user-activity, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/email-stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:01:57 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +20ms[39m
+Backend running on http://localhost:3000
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mChecking manager reminder settings...[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mFound 1 enabled reminder setting(s). Local today: 2026-07-07, Local time: 17:02[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mSetting [b13f0df4-41b6-40be-a3ba-dea2137fc83c]: reminder_time=15:00:00, last_sent_at=2026-07-07T09:30:00.024+00:00, now=17:02, remDate=15:00[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mSkipping: already sent today (last_sent_at=2026-07-07T09:30:00.024+00:00).[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:00 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 6 updated SF task(s) for user e4933905-ec46-45be-a54f-753753322f8b.[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:00 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mInserted new local task from SF 00Tg500001WakfiEAB[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 00596a03-1303-45f8-addd-4f6da31b470a from SF 00Tg500001WTHc4EAH[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:02 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task f4672964-d379-4d7b-b1e5-f273b83b2748 from SF 00Tg500001WUmCNEA1[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:02 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mInserted new local task from SF 00Tg500001WPyZ7EAL[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 9 updated SF task(s) for user 8cb3e3e6-ed15-4c8e-a953-3eb6b57a9ce5.[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task de90a532-e556-4be3-9546-c97a0a88684a from SF 00Tg500001WXFq9EAH[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task f2485b2b-4055-4c0c-9e29-34ef5aa3f54b from SF 00Tg500001Wb0dNEAR[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task d15d409a-ae67-41cb-ba8c-db9f9e791aee from SF 00Tg500001WbfAvEAJ[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mInserted new local task from SF 00Tg500001WXE1FEAX[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:05 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:05 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mInserted new local task from SF 00Tg500001WV5gPEAT[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:05 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 00596a03-1303-45f8-addd-4f6da31b470a from SF 00Tg500001WTHc4EAH[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:05 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task f4672964-d379-4d7b-b1e5-f273b83b2748 from SF 00Tg500001WUmCNEA1[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:30 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 6 updated SF task(s) for user e4933905-ec46-45be-a54f-753753322f8b.[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:30 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mInserted new local task from SF 00Tg500001WakfiEAB[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 00596a03-1303-45f8-addd-4f6da31b470a from SF 00Tg500001WTHc4EAH[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task f4672964-d379-4d7b-b1e5-f273b83b2748 from SF 00Tg500001WUmCNEA1[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:32 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mInserted new local task from SF 00Tg500001WPyZ7EAL[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 9 updated SF task(s) for user 8cb3e3e6-ed15-4c8e-a953-3eb6b57a9ce5.[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task a010d3b7-96c3-4949-bd95-16a12ce2b076 from SF 00Tg500001WXFq9EAH[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 95317044-4c0e-402c-9034-8992dc777e99 from SF 00Tg500001Wb0dNEAR[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 395eaab7-04fd-42fe-a28e-d6bdc10c6b41 from SF 00Tg500001WbfAvEAJ[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task efb94fb5-b8d3-485e-8250-86841ef530d8 from SF 00Tg500001WXE1FEAX[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mInserted new local task from SF 00Tg500001WV5gPEAT[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:35 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 00596a03-1303-45f8-addd-4f6da31b470a from SF 00Tg500001WTHc4EAH[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:02:35 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task f4672964-d379-4d7b-b1e5-f273b83b2748 from SF 00Tg500001WUmCNEA1[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mChecking manager reminder settings...[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mFound 1 enabled reminder setting(s). Local today: 2026-07-07, Local time: 17:03[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mSetting [b13f0df4-41b6-40be-a3ba-dea2137fc83c]: reminder_time=15:00:00, last_sent_at=2026-07-07T09:30:00.024+00:00, now=17:03, remDate=15:00[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mSkipping: already sent today (last_sent_at=2026-07-07T09:30:00.024+00:00).[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:00 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 6 updated SF task(s) for user e4933905-ec46-45be-a54f-753753322f8b.[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:00 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mInserted new local task from SF 00Tg500001WakfiEAB[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 00596a03-1303-45f8-addd-4f6da31b470a from SF 00Tg500001WTHc4EAH[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task f4672964-d379-4d7b-b1e5-f273b83b2748 from SF 00Tg500001WUmCNEA1[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:02 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mInserted new local task from SF 00Tg500001WPyZ7EAL[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:02 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 9 updated SF task(s) for user 8cb3e3e6-ed15-4c8e-a953-3eb6b57a9ce5.[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 2ca5f03b-2fa0-4eb5-805a-7d773159f1db from SF 00Tg500001WXFq9EAH[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task d3872015-c012-4f7d-b425-ea4d27890368 from SF 00Tg500001Wb0dNEAR[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task c1a8bf04-46c2-4108-bb75-f515f5a5a838 from SF 00Tg500001WbfAvEAJ[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b9bc04da-7b44-4f09-9d04-f1d223fc9299 from SF 00Tg500001WXE1FEAX[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mInserted new local task from SF 00Tg500001WV5gPEAT[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 00596a03-1303-45f8-addd-4f6da31b470a from SF 00Tg500001WTHc4EAH[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:05 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task f4672964-d379-4d7b-b1e5-f273b83b2748 from SF 00Tg500001WUmCNEA1[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:30 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 6 updated SF task(s) for user e4933905-ec46-45be-a54f-753753322f8b.[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:30 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mInserted new local task from SF 00Tg500001WakfiEAB[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 00596a03-1303-45f8-addd-4f6da31b470a from SF 00Tg500001WTHc4EAH[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task f4672964-d379-4d7b-b1e5-f273b83b2748 from SF 00Tg500001WUmCNEA1[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:32 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mInserted new local task from SF 00Tg500001WPyZ7EAL[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:32 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 9 updated SF task(s) for user 8cb3e3e6-ed15-4c8e-a953-3eb6b57a9ce5.[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task f4886a7d-1542-4b0e-8c11-3a07be17fcfe from SF 00Tg500001WXFq9EAH[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 9d7741b5-4bc5-4863-bb83-36d2968832e7 from SF 00Tg500001Wb0dNEAR[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 05c82c0f-5ae2-478a-8e84-d1d9c0e1d63c from SF 00Tg500001WbfAvEAJ[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b0e0e3e8-3921-4b97-9966-5bffdd235111 from SF 00Tg500001WXE1FEAX[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mInserted new local task from SF 00Tg500001WV5gPEAT[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 00596a03-1303-45f8-addd-4f6da31b470a from SF 00Tg500001WTHc4EAH[39m
+[32m[Nest] 14372  - [39m07/07/2026, 5:03:35 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task f4672964-d379-4d7b-b1e5-f273b83b2748 from SF 00Tg500001WUmCNEA1[39m
+[2J[3J[H[[90m12:26:09 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m12:26:10 PM[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:26:11 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m12:26:13 PM[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:26:13 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m12:26:14 PM[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:26:15 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m12:26:16 PM[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:26:19 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m12:26:19 PM[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:26:20 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m12:26:20 PM[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:26:23 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m12:26:23 PM[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:26:24 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m12:26:24 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +11ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSupabaseModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSchedulerModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTeamsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReportsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSalesforceModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTasksModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +138ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/register, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/microsoft, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/microsoft/url, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/managers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/reps, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/profile, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminController {/api/admin}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/approve-user, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/reject-user, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/pending-approvals, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/assign-rep, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/assignments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTeamsController {/api/teams}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/assign, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/unassign/:managerId/:repId, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/my-team, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/manager/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/all, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/stats, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTasksController {/api/tasks}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks, POST} route[39m[38;5;3m +9ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks, GET} route[39m[38;5;3m +5ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/dashboard, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/notes, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/notes, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/activities, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSalesforceController {/api/salesforce}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/auth-url, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/status, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/disconnect, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/salesforce/callback, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/opportunities, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTemplatesController {/api/email/templates}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOutlookController {/api/email/outlook}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/outlook/status, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/outlook/send, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEmailController {/api/email}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/ai/compose, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/ai/suggest-task, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotificationsController {/api/notifications}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/unread-count, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/:id/read, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/mark-all-read, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/reminder-settings, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/reminder-settings, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReportsController {/api/reports}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/task-summary, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/rep-performance, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/user-activity, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:26 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/email-stats, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:27 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +72ms[39m
+Backend running on http://localhost:3000
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:30 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 5 updated SF task(s) for user e4933905-ec46-45be-a54f-753753322f8b.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:30 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 9898ae85-a87f-40f5-9512-4ab28221b7dd from SF 00Tg500001X8ju5EAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task d21929aa-a9c7-409a-9caa-8a859fd04906 from SF 00Tg500001X8YPBEA3[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task c845632e-f40f-4645-9bc9-4d16051bbf2f from SF 00Tg500001WakfiEAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:32 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 8 updated SF task(s) for user 8cb3e3e6-ed15-4c8e-a953-3eb6b57a9ce5.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 1370fed1-b8c9-4703-92d1-3ad7e57fb4e5 from SF 00Tg500001WZAw2EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 5a2a6c69-14ff-448a-b3a7-bee51b8b0df8 from SF 00Tg500001WXFq9EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task ae6f934d-4aa6-4c3a-a8ce-7149e0b625e8 from SF 00Tg500001Wb0dNEAR[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 28906e33-3f47-4f6e-9285-71e0840180ec from SF 00Tg500001WbfAvEAJ[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 3b590650-da00-4cfd-a40f-3bc9c2d934a5 from SF 00Tg500001WXE1FEAX[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:26:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 031f2a64-0415-4e8a-970e-e944ae833245 from SF 00Tg500001WV5gPEAT[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mChecking manager reminder settings...[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mFound 1 enabled reminder setting(s). Local today: 2026-07-08, Local time: 12:27[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mSetting [b13f0df4-41b6-40be-a3ba-dea2137fc83c]: reminder_time=15:00:00, last_sent_at=2026-07-07T09:30:00.024+00:00, now=12:27, remDate=15:00[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mSkipping: reminder time 15:00:00 not yet reached.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:00 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 5 updated SF task(s) for user e4933905-ec46-45be-a54f-753753322f8b.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:00 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 9898ae85-a87f-40f5-9512-4ab28221b7dd from SF 00Tg500001X8ju5EAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task d21929aa-a9c7-409a-9caa-8a859fd04906 from SF 00Tg500001X8YPBEA3[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task c845632e-f40f-4645-9bc9-4d16051bbf2f from SF 00Tg500001WakfiEAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:02 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:02 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 8 updated SF task(s) for user 8cb3e3e6-ed15-4c8e-a953-3eb6b57a9ce5.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 1370fed1-b8c9-4703-92d1-3ad7e57fb4e5 from SF 00Tg500001WZAw2EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 5a2a6c69-14ff-448a-b3a7-bee51b8b0df8 from SF 00Tg500001WXFq9EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task ae6f934d-4aa6-4c3a-a8ce-7149e0b625e8 from SF 00Tg500001Wb0dNEAR[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 28906e33-3f47-4f6e-9285-71e0840180ec from SF 00Tg500001WbfAvEAJ[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 3b590650-da00-4cfd-a40f-3bc9c2d934a5 from SF 00Tg500001WXE1FEAX[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 031f2a64-0415-4e8a-970e-e944ae833245 from SF 00Tg500001WV5gPEAT[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:30 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 5 updated SF task(s) for user e4933905-ec46-45be-a54f-753753322f8b.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:30 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 9898ae85-a87f-40f5-9512-4ab28221b7dd from SF 00Tg500001X8ju5EAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task d21929aa-a9c7-409a-9caa-8a859fd04906 from SF 00Tg500001X8YPBEA3[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task c845632e-f40f-4645-9bc9-4d16051bbf2f from SF 00Tg500001WakfiEAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:32 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:32 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 7 updated SF task(s) for user 8cb3e3e6-ed15-4c8e-a953-3eb6b57a9ce5.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 1370fed1-b8c9-4703-92d1-3ad7e57fb4e5 from SF 00Tg500001WZAw2EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 5a2a6c69-14ff-448a-b3a7-bee51b8b0df8 from SF 00Tg500001WXFq9EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task ae6f934d-4aa6-4c3a-a8ce-7149e0b625e8 from SF 00Tg500001Wb0dNEAR[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 28906e33-3f47-4f6e-9285-71e0840180ec from SF 00Tg500001WbfAvEAJ[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 3b590650-da00-4cfd-a40f-3bc9c2d934a5 from SF 00Tg500001WXE1FEAX[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:27:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mChecking manager reminder settings...[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mFound 1 enabled reminder setting(s). Local today: 2026-07-08, Local time: 12:28[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mSetting [b13f0df4-41b6-40be-a3ba-dea2137fc83c]: reminder_time=15:00:00, last_sent_at=2026-07-07T09:30:00.024+00:00, now=12:28, remDate=15:00[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mSkipping: reminder time 15:00:00 not yet reached.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:00 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 5 updated SF task(s) for user e4933905-ec46-45be-a54f-753753322f8b.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 9898ae85-a87f-40f5-9512-4ab28221b7dd from SF 00Tg500001X8ju5EAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task d21929aa-a9c7-409a-9caa-8a859fd04906 from SF 00Tg500001X8YPBEA3[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task c845632e-f40f-4645-9bc9-4d16051bbf2f from SF 00Tg500001WakfiEAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:02 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 7 updated SF task(s) for user 8cb3e3e6-ed15-4c8e-a953-3eb6b57a9ce5.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 1370fed1-b8c9-4703-92d1-3ad7e57fb4e5 from SF 00Tg500001WZAw2EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 5a2a6c69-14ff-448a-b3a7-bee51b8b0df8 from SF 00Tg500001WXFq9EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task ae6f934d-4aa6-4c3a-a8ce-7149e0b625e8 from SF 00Tg500001Wb0dNEAR[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 28906e33-3f47-4f6e-9285-71e0840180ec from SF 00Tg500001WbfAvEAJ[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 3b590650-da00-4cfd-a40f-3bc9c2d934a5 from SF 00Tg500001WXE1FEAX[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 58091c6c-73c7-4b22-8da4-538fa86f04a1 from SF 00Tg500001WV3d0EAD[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:30 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 4 updated SF task(s) for user e4933905-ec46-45be-a54f-753753322f8b.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:30 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 9898ae85-a87f-40f5-9512-4ab28221b7dd from SF 00Tg500001X8ju5EAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task d21929aa-a9c7-409a-9caa-8a859fd04906 from SF 00Tg500001X8YPBEA3[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task c845632e-f40f-4645-9bc9-4d16051bbf2f from SF 00Tg500001WakfiEAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:32 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 6 updated SF task(s) for user 8cb3e3e6-ed15-4c8e-a953-3eb6b57a9ce5.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:32 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 1370fed1-b8c9-4703-92d1-3ad7e57fb4e5 from SF 00Tg500001WZAw2EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 5a2a6c69-14ff-448a-b3a7-bee51b8b0df8 from SF 00Tg500001WXFq9EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task ae6f934d-4aa6-4c3a-a8ce-7149e0b625e8 from SF 00Tg500001Wb0dNEAR[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 28906e33-3f47-4f6e-9285-71e0840180ec from SF 00Tg500001WbfAvEAJ[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 3b590650-da00-4cfd-a40f-3bc9c2d934a5 from SF 00Tg500001WXE1FEAX[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:28:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mChecking manager reminder settings...[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mFound 1 enabled reminder setting(s). Local today: 2026-07-08, Local time: 12:29[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mSetting [b13f0df4-41b6-40be-a3ba-dea2137fc83c]: reminder_time=15:00:00, last_sent_at=2026-07-07T09:30:00.024+00:00, now=12:29, remDate=15:00[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mSkipping: reminder time 15:00:00 not yet reached.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:00 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 4 updated SF task(s) for user e4933905-ec46-45be-a54f-753753322f8b.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 9898ae85-a87f-40f5-9512-4ab28221b7dd from SF 00Tg500001X8ju5EAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task d21929aa-a9c7-409a-9caa-8a859fd04906 from SF 00Tg500001X8YPBEA3[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task c845632e-f40f-4645-9bc9-4d16051bbf2f from SF 00Tg500001WakfiEAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:02 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 6 updated SF task(s) for user 8cb3e3e6-ed15-4c8e-a953-3eb6b57a9ce5.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 1370fed1-b8c9-4703-92d1-3ad7e57fb4e5 from SF 00Tg500001WZAw2EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 5a2a6c69-14ff-448a-b3a7-bee51b8b0df8 from SF 00Tg500001WXFq9EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task ae6f934d-4aa6-4c3a-a8ce-7149e0b625e8 from SF 00Tg500001Wb0dNEAR[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 28906e33-3f47-4f6e-9285-71e0840180ec from SF 00Tg500001WbfAvEAJ[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 3b590650-da00-4cfd-a40f-3bc9c2d934a5 from SF 00Tg500001WXE1FEAX[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:30 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 4 updated SF task(s) for user e4933905-ec46-45be-a54f-753753322f8b.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:30 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 9898ae85-a87f-40f5-9512-4ab28221b7dd from SF 00Tg500001X8ju5EAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task d21929aa-a9c7-409a-9caa-8a859fd04906 from SF 00Tg500001X8YPBEA3[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task c845632e-f40f-4645-9bc9-4d16051bbf2f from SF 00Tg500001WakfiEAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:32 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 6 updated SF task(s) for user 8cb3e3e6-ed15-4c8e-a953-3eb6b57a9ce5.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:32 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 1370fed1-b8c9-4703-92d1-3ad7e57fb4e5 from SF 00Tg500001WZAw2EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:32 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 5a2a6c69-14ff-448a-b3a7-bee51b8b0df8 from SF 00Tg500001WXFq9EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task ae6f934d-4aa6-4c3a-a8ce-7149e0b625e8 from SF 00Tg500001Wb0dNEAR[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 28906e33-3f47-4f6e-9285-71e0840180ec from SF 00Tg500001WbfAvEAJ[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 3b590650-da00-4cfd-a40f-3bc9c2d934a5 from SF 00Tg500001WXE1FEAX[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:29:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mChecking manager reminder settings...[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mFound 1 enabled reminder setting(s). Local today: 2026-07-08, Local time: 12:30[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mSetting [b13f0df4-41b6-40be-a3ba-dea2137fc83c]: reminder_time=15:00:00, last_sent_at=2026-07-07T09:30:00.024+00:00, now=12:30, remDate=15:00[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mSkipping: reminder time 15:00:00 not yet reached.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:00 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 4 updated SF task(s) for user e4933905-ec46-45be-a54f-753753322f8b.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:00 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 9898ae85-a87f-40f5-9512-4ab28221b7dd from SF 00Tg500001X8ju5EAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task d21929aa-a9c7-409a-9caa-8a859fd04906 from SF 00Tg500001X8YPBEA3[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task c845632e-f40f-4645-9bc9-4d16051bbf2f from SF 00Tg500001WakfiEAB[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:02 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 6 updated SF task(s) for user 8cb3e3e6-ed15-4c8e-a953-3eb6b57a9ce5.[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:02 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 1370fed1-b8c9-4703-92d1-3ad7e57fb4e5 from SF 00Tg500001WZAw2EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 5a2a6c69-14ff-448a-b3a7-bee51b8b0df8 from SF 00Tg500001WXFq9EAH[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task ae6f934d-4aa6-4c3a-a8ce-7149e0b625e8 from SF 00Tg500001Wb0dNEAR[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 28906e33-3f47-4f6e-9285-71e0840180ec from SF 00Tg500001WbfAvEAJ[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 3b590650-da00-4cfd-a40f-3bc9c2d934a5 from SF 00Tg500001WXE1FEAX[39m
+[32m[Nest] 71592  - [39m07/08/2026, 12:30:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[2J[3J[H[[90m12:30:07 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m12:30:08 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +11ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSupabaseModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSchedulerModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTeamsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReportsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSalesforceModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTasksModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +37ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/register, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/microsoft, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/microsoft/url, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/managers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/reps, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/profile, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminController {/api/admin}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/approve-user, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/reject-user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/pending-approvals, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/assign-rep, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/assignments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTeamsController {/api/teams}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/assign, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/unassign/:managerId/:repId, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/my-team, GET} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/manager/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/all, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/stats, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTasksController {/api/tasks}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/notes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/notes, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/activities, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSalesforceController {/api/salesforce}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/auth-url, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/disconnect, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/salesforce/callback, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/opportunities, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTemplatesController {/api/email/templates}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOutlookController {/api/email/outlook}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/outlook/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/outlook/send, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEmailController {/api/email}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/ai/compose, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/ai/suggest-task, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotificationsController {/api/notifications}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/unread-count, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/:id/read, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/mark-all-read, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/reminder-settings, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/reminder-settings, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReportsController {/api/reports}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/task-summary, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/rep-performance, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/user-activity, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/email-stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 63200  - [39m07/08/2026, 12:30:10 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +17ms[39m
+[2J[3J[H[[90m12:30:29 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m21[0m:[93m5[0m - [91merror[0m[90m TS1308: [0m'await' expressions are only allowed within async functions and at the top levels of modules.
+
+[7m21[0m     await this.salesforceService.disconnect(userId);
+[7m  [0m [91m    ~~~~~[0m
+
+  [96msrc/salesforce/salesforce.controller.ts[0m:[93m17[0m:[93m3[0m
+    [7m17[0m   getAuthUrl(@CurrentUser() user: { sub: string }) {
+    [7m  [0m [96m  ~~~~~~~~~~[0m
+    Did you mean to mark this function as 'async'?
+
+[[90m12:30:30 PM[0m] Found 1 error. Watching for file changes.
+
+[2J[3J[H[[90m12:30:59 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m9[0m:[93m19[0m - [91merror[0m[90m TS1146: [0mDeclaration expected.
+
+[7m9[0m     @Query('code') code: string,
+[7m [0m [91m                  [0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m10[0m:[93m20[0m - [91merror[0m[90m TS1109: [0mExpression expected.
+
+[7m10[0m     @Query('state') state: string,
+[7m  [0m [91m                   [0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m10[0m:[93m21[0m - [91merror[0m[90m TS1005: [0m';' expected.
+
+[7m10[0m     @Query('state') state: string,
+[7m  [0m [91m                    ~~~~~[0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m11[0m:[93m20[0m - [91merror[0m[90m TS1109: [0mExpression expected.
+
+[7m11[0m     @Query('error') sfError: string,
+[7m  [0m [91m                   [0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m11[0m:[93m21[0m - [91merror[0m[90m TS1005: [0m';' expected.
+
+[7m11[0m     @Query('error') sfError: string,
+[7m  [0m [91m                    ~~~~~~~[0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m12[0m:[93m32[0m - [91merror[0m[90m TS1109: [0mExpression expected.
+
+[7m12[0m     @Query('error_description') sfErrorDesc: string,
+[7m  [0m [91m                               [0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m12[0m:[93m33[0m - [91merror[0m[90m TS1005: [0m';' expected.
+
+[7m12[0m     @Query('error_description') sfErrorDesc: string,
+[7m  [0m [91m                                ~~~~~~~~~~~[0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m13[0m:[93m11[0m - [91merror[0m[90m TS1109: [0mExpression expected.
+
+[7m13[0m     @Res() res: Response,
+[7m  [0m [91m          [0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m13[0m:[93m12[0m - [91merror[0m[90m TS1005: [0m';' expected.
+
+[7m13[0m     @Res() res: Response,
+[7m  [0m [91m           ~~~[0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m14[0m:[93m3[0m - [91merror[0m[90m TS1109: [0mExpression expected.
+
+[7m14[0m   ) {
+[7m  [0m [91m  ~[0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m40[0m:[93m8[0m - [91merror[0m[90m TS1146: [0mDeclaration expected.
+
+[7m40[0m   async getOpportunities(@CurrentUser() user: { sub: string }) {
+[7m  [0m [91m       [0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m40[0m:[93m40[0m - [91merror[0m[90m TS1109: [0mExpression expected.
+
+[7m40[0m   async getOpportunities(@CurrentUser() user: { sub: string }) {
+[7m  [0m [91m                                       [0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m40[0m:[93m41[0m - [91merror[0m[90m TS1005: [0m',' expected.
+
+[7m40[0m   async getOpportunities(@CurrentUser() user: { sub: string }) {
+[7m  [0m [91m                                        ~~~~[0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m40[0m:[93m45[0m - [91merror[0m[90m TS1005: [0m',' expected.
+
+[7m40[0m   async getOpportunities(@CurrentUser() user: { sub: string }) {
+[7m  [0m [91m                                            ~[0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m40[0m:[93m64[0m - [91merror[0m[90m TS1005: [0m';' expected.
+
+[7m40[0m   async getOpportunities(@CurrentUser() user: { sub: string }) {
+[7m  [0m [91m                                                               ~[0m
+
+[96msrc/salesforce/salesforce.controller.ts[0m:[93m45[0m:[93m1[0m - [91merror[0m[90m TS1128: [0mDeclaration or statement expected.
+
+[7m45[0m }
+[7m  [0m [91m~[0m
+
+[[90m12:30:59 PM[0m] Found 16 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:31:31 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m12:31:31 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +11ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSupabaseModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSchedulerModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTeamsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReportsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSalesforceModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTasksModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +52ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/register, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/microsoft, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/microsoft/url, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/managers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/reps, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/profile, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminController {/api/admin}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/approve-user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/reject-user, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/pending-approvals, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/assign-rep, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/assignments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTeamsController {/api/teams}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/assign, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/unassign/:managerId/:repId, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/my-team, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/manager/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/all, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/stats, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTasksController {/api/tasks}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks, GET} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/dashboard, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/notes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/notes, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/activities, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSalesforceController {/api/salesforce}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/auth-url, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/disconnect, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/salesforce/callback, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/opportunities, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTemplatesController {/api/email/templates}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOutlookController {/api/email/outlook}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/outlook/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/outlook/send, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEmailController {/api/email}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/ai/compose, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/ai/suggest-task, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotificationsController {/api/notifications}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/unread-count, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/:id/read, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/mark-all-read, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/reminder-settings, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/reminder-settings, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReportsController {/api/reports}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/task-summary, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/rep-performance, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/user-activity, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/email-stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:31:33 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +17ms[39m
+Backend running on http://localhost:3000
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mChecking manager reminder settings...[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mFound 1 enabled reminder setting(s). Local today: 2026-07-08, Local time: 12:32[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mSetting [b13f0df4-41b6-40be-a3ba-dea2137fc83c]: reminder_time=15:00:00, last_sent_at=2026-07-07T09:30:00.024+00:00, now=12:32, remDate=15:00[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:00 PM [32m    LOG[39m [38;5;3m[SchedulerService] [39m[32mSkipping: reminder time 15:00:00 not yet reached.[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:00 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 4 updated SF task(s) for user e4933905-ec46-45be-a54f-753753322f8b.[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 9898ae85-a87f-40f5-9512-4ab28221b7dd from SF 00Tg500001X8ju5EAB[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task d21929aa-a9c7-409a-9caa-8a859fd04906 from SF 00Tg500001X8YPBEA3[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:01 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task c845632e-f40f-4645-9bc9-4d16051bbf2f from SF 00Tg500001WakfiEAB[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:02 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:02 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 6 updated SF task(s) for user 8cb3e3e6-ed15-4c8e-a953-3eb6b57a9ce5.[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 1370fed1-b8c9-4703-92d1-3ad7e57fb4e5 from SF 00Tg500001WZAw2EAH[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 5a2a6c69-14ff-448a-b3a7-bee51b8b0df8 from SF 00Tg500001WXFq9EAH[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:03 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task ae6f934d-4aa6-4c3a-a8ce-7149e0b625e8 from SF 00Tg500001Wb0dNEAR[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 28906e33-3f47-4f6e-9285-71e0840180ec from SF 00Tg500001WbfAvEAJ[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 3b590650-da00-4cfd-a40f-3bc9c2d934a5 from SF 00Tg500001WXE1FEAX[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:04 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:30 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 4 updated SF task(s) for user e4933905-ec46-45be-a54f-753753322f8b.[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:30 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 9898ae85-a87f-40f5-9512-4ab28221b7dd from SF 00Tg500001X8ju5EAB[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task d21929aa-a9c7-409a-9caa-8a859fd04906 from SF 00Tg500001X8YPBEA3[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task c845632e-f40f-4645-9bc9-4d16051bbf2f from SF 00Tg500001WakfiEAB[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:31 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:32 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mFound 6 updated SF task(s) for user 8cb3e3e6-ed15-4c8e-a953-3eb6b57a9ce5.[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 1370fed1-b8c9-4703-92d1-3ad7e57fb4e5 from SF 00Tg500001WZAw2EAH[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 5a2a6c69-14ff-448a-b3a7-bee51b8b0df8 from SF 00Tg500001WXFq9EAH[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task ae6f934d-4aa6-4c3a-a8ce-7149e0b625e8 from SF 00Tg500001Wb0dNEAR[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:33 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 28906e33-3f47-4f6e-9285-71e0840180ec from SF 00Tg500001WbfAvEAJ[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task 3b590650-da00-4cfd-a40f-3bc9c2d934a5 from SF 00Tg500001WXE1FEAX[39m
+[32m[Nest] 21748  - [39m07/08/2026, 12:32:34 PM [32m    LOG[39m [38;5;3m[SalesforceService] [39m[32mUpdated existing local task b8502042-3cdb-4386-b18e-c57db3dd9ac6 from SF 00Tg500001WUiThEAL[39m
+[2J[3J[H[[90m12:32:50 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m12:32:53 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +16ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSupabaseModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSchedulerModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTeamsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReportsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSalesforceModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTasksModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +50ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/register, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/microsoft, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/microsoft/url, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/managers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/reps, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/profile, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminController {/api/admin}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/approve-user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/reject-user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/pending-approvals, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/assign-rep, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/assignments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTeamsController {/api/teams}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/assign, POST} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/unassign/:managerId/:repId, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/my-team, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/manager/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/all, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/teams/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTasksController {/api/tasks}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/notes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/notes, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tasks/:id/activities, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSalesforceController {/api/salesforce}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/auth-url, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/disconnect, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/salesforce/callback, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/salesforce/opportunities, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTemplatesController {/api/email/templates}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/templates/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOutlookController {/api/email/outlook}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/outlook/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/outlook/send, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEmailController {/api/email}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/ai/compose, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/ai/suggest-task, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotificationsController {/api/notifications}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/unread-count, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/:id/read, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/mark-all-read, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/reminder-settings, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/notifications/reminder-settings, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReportsController {/api/reports}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/task-summary, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/rep-performance, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/user-activity, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/reports/email-stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 70076  - [39m07/08/2026, 12:32:56 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +16ms[39m

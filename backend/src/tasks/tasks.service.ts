@@ -15,8 +15,18 @@ export class TasksService {
   async create(dto: CreateTaskDto, userId: string, userRole?: string) {
     const supabase = this.supabaseService.getClient();
     const assignedTo = userRole === 'REP' ? userId : (dto.assigned_to || null);
+    let taskType = dto.task_type || 'OTHER';
+    if (taskType === 'OTHER') {
+      const titleLower = (dto.title || '').toLowerCase();
+      if (titleLower.includes('call')) taskType = 'CALL';
+      else if (titleLower.includes('email') || titleLower.includes('mail')) taskType = 'EMAIL';
+      else if (titleLower.includes('linkedin')) taskType = 'LINKEDIN';
+      else if (titleLower.includes('meet')) taskType = 'MEETING';
+    }
+
     const taskData = {
       ...dto,
+      task_type: taskType,
       assigned_to: assignedTo,
       created_by: userId,
       assigned_by: assignedTo ? userId : null,
@@ -38,7 +48,8 @@ export class TasksService {
     }
 
     // Sync to Salesforce (fire-and-forget)
-    this.syncCreateToSalesforce(data, userId).catch(err =>
+    const sfSyncUserId = assignedTo || userId;
+    this.syncCreateToSalesforce(data, sfSyncUserId).catch(err =>
       this.logger.error(`SF sync failed for new task ${data.id}: ${err.message}`),
     );
 
@@ -65,7 +76,8 @@ export class TasksService {
       .select('*', { count: 'exact' });
 
     if (userRole === 'REP') {
-      builder = builder.eq('assigned_to', userId);
+      // Show tasks assigned to the REP, OR tasks created by the REP with no assignee
+      builder = builder.or(`assigned_to.eq.${userId},and(created_by.eq.${userId},assigned_to.is.null)`);
     } else if (userRole === 'MANAGER') {
       const { data: assignments } = await supabase
         .from('manager_rep_assignments')
@@ -73,7 +85,8 @@ export class TasksService {
         .eq('manager_id', userId);
       const repIds = (assignments || []).map(a => a.rep_id);
       repIds.push(userId);
-      builder = builder.in('assigned_to', repIds);
+      // Include tasks assigned to reps/manager, OR tasks created by them with no assignee
+      builder = builder.or(`assigned_to.in.(${repIds.join(',')}),and(created_by.in.(${repIds.join(',')}),assigned_to.is.null)`);
     }
 
     if (filters.task_type) builder = builder.eq('task_type', filters.task_type);
@@ -147,7 +160,8 @@ export class TasksService {
 
     // Sync update to Salesforce if linked
     if (data.salesforce_id) {
-      this.salesforceService.updateSFTask(userId, data.salesforce_id, dto).catch(err =>
+      const sfSyncUserId = data.assigned_to || userId;
+      this.salesforceService.updateSFTask(sfSyncUserId, data.salesforce_id, dto).catch(err =>
         this.logger.error(`SF update sync failed for task ${id}: ${err.message}`),
       );
     }
@@ -158,10 +172,10 @@ export class TasksService {
   async delete(id: string) {
     const supabase = this.supabaseService.getClient();
 
-    // Fetch salesforce_id and created_by before deleting
+    // Fetch salesforce_id, created_by, and assigned_to before deleting
     const { data: task } = await supabase
       .from('tasks')
-      .select('salesforce_id, created_by')
+      .select('salesforce_id, created_by, assigned_to')
       .eq('id', id)
       .maybeSingle();
 
@@ -172,11 +186,14 @@ export class TasksService {
 
     if (error) throw error;
 
-    // Sync deletion to Salesforce if linked using the task creator's SF connection
-    if (task?.salesforce_id && task?.created_by) {
-      this.salesforceService.deleteSFTask(task.created_by, task.salesforce_id).catch(err =>
-        this.logger.error(`SF delete sync failed for task ${id}: ${err.message}`),
-      );
+    // Sync deletion to Salesforce if linked using the task assignee's or creator's SF connection
+    if (task?.salesforce_id) {
+      const sfSyncUserId = task.assigned_to || task.created_by;
+      if (sfSyncUserId) {
+        this.salesforceService.deleteSFTask(sfSyncUserId, task.salesforce_id).catch(err =>
+          this.logger.error(`SF delete sync failed for task ${id}: ${err.message}`),
+        );
+      }
     }
 
     return { message: 'Task deleted successfully' };
@@ -229,9 +246,11 @@ export class TasksService {
     const supabase = this.supabaseService.getClient();
 
     if (userRole === 'REP') {
-      let builder = supabase.from('tasks').select('*').eq('assigned_to', userId);
-
-      const { data: tasks } = await builder;
+      // Show tasks assigned to this REP OR tasks they created with no assignee
+      const { data: tasks } = await supabase
+        .from('tasks')
+        .select('*')
+        .or(`assigned_to.eq.${userId},and(created_by.eq.${userId},assigned_to.is.null)`);
       const allTasks = tasks || [];
       const total = allTasks.length;
       const pending = allTasks.filter(t => t.status === 'PENDING').length;
@@ -315,7 +334,7 @@ export class TasksService {
         .eq('manager_id', userId);
       repIds = (assignments || []).map(a => a.rep_id);
       repIds.push(userId);
-      query = query.in('assigned_to', repIds);
+      query = query.or(`assigned_to.in.(${repIds.join(',')}),and(created_by.in.(${repIds.join(',')}),assigned_to.is.null)`);
     }
 
     const { data: tasks } = await query;

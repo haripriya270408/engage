@@ -34,6 +34,7 @@ interface Task {
   is_recurring: boolean;
   recurring_interval: string | null;
   salesforce_id: string | null;
+  salesforce_what_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -101,7 +102,11 @@ export default function TaskDetailPage() {
     note: '',
     is_recurring: false,
     recurring_interval: '',
+    salesforce_what_id: '',
   });
+
+  const [opportunities, setOpportunities] = useState<{ Id: string; Name: string }[]>([]);
+  const [loadingOpportunities, setLoadingOpportunities] = useState(true);
 
   const [newNote, setNewNote] = useState('');
   const [addingNote, setAddingNote] = useState(false);
@@ -134,10 +139,23 @@ export default function TaskDetailPage() {
     }
   };
 
+  const fetchOpportunities = async () => {
+    try {
+      const { data } = await api.get('/salesforce/opportunities');
+      if (data?.opportunities) {
+        setOpportunities(data.opportunities);
+      }
+    } catch {
+      // silently ignore
+    } finally {
+      setLoadingOpportunities(false);
+    }
+  };
+
   useEffect(() => {
     const load = async () => {
       setLoading(true);
-      await Promise.all([fetchTask(), fetchNotes(), fetchActivities()]);
+      await Promise.all([fetchTask(), fetchNotes(), fetchActivities(), fetchOpportunities()]);
       setLoading(false);
     };
     load();
@@ -162,6 +180,7 @@ export default function TaskDetailPage() {
         note: task.note || '',
         is_recurring: task.is_recurring,
         recurring_interval: task.recurring_interval || '',
+        salesforce_what_id: task.salesforce_what_id || '',
       });
     }
   }, [task, editing]);
@@ -213,6 +232,7 @@ export default function TaskDetailPage() {
         note: editForm.note || null,
         is_recurring: editForm.is_recurring,
         recurring_interval: editForm.is_recurring ? editForm.recurring_interval : null,
+        salesforce_what_id: editForm.salesforce_what_id || null,
       };
       await api.patch(`/tasks/${id}`, payload);
       toast.success('Task updated');
@@ -269,12 +289,38 @@ export default function TaskDetailPage() {
           <h1 className="text-2xl font-semibold text-gray-900">{editing ? 'Edit Task' : task.title}</h1>
         </div>
         <div className="flex items-center gap-2">
+          {!editing && task.task_type === 'CALL' && (
+            <>
+              <a
+                href={`https://outlook.office.com/calendar/0/deeplink/compose?subject=${encodeURIComponent('Meeting: ' + task.title)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#5B5FC7] text-white text-[12px] font-semibold rounded-lg hover:bg-[#4a4db0] transition-colors"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+                Connect Teams
+              </a>
+              <a
+                href={`https://zoom.us/schedule?topic=${encodeURIComponent(task.title)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#2D8CFF] text-white text-[12px] font-semibold rounded-lg hover:bg-[#1a73e8] transition-colors"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                </svg>
+                Connect Zoom
+              </a>
+            </>
+          )}
           {!editing && task.task_type === 'EMAIL' && (
             <button
               onClick={() => setIsEmailModalOpen(true)}
-              className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 flex items-center gap-2"
+              className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 flex items-center gap-1.5"
             >
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
               Email Contact
@@ -349,6 +395,26 @@ export default function TaskDetailPage() {
           <div className="border-t border-gray-200 pt-4">
             <h3 className="mb-3 text-sm font-semibold text-gray-700">Details</h3>
             <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                {!loadingOpportunities ? (
+                  <select
+                    name="salesforce_what_id"
+                    value={editForm.salesforce_what_id}
+                    onChange={handleEditChange}
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                  >
+                    <option value="">-- No Salesforce Opportunity --</option>
+                    {opportunities.map((opp) => (
+                      <option key={opp.Id} value={opp.Id}>{opp.Name}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="flex items-center gap-2 py-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+                    <span className="text-xs text-gray-400">Loading Opportunities...</span>
+                  </div>
+                )}
+              </div>
               <input type="text" name="company_name" value={editForm.company_name} onChange={handleEditChange} placeholder="Company"
                 className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none" />
               <input type="url" name="linkedin_url" value={editForm.linkedin_url} onChange={handleEditChange} placeholder="LinkedIn URL"

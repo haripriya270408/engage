@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import QueueOverlay from '@/components/queue-overlay';
 
 interface Task {
   id: string;
@@ -98,6 +99,10 @@ export default function DashboardPage() {
   const [sortBy, setSortBy] = useState<'due_date' | 'priority'>('due_date');
 
   const [isBulkActing, setIsBulkActing] = useState(false);
+
+  // Queue Mode State
+  const [isQueueOpen, setIsQueueOpen] = useState(false);
+  const [queueTasks, setQueueTasks] = useState<Task[]>([]);
   const [openDueDateModal, setOpenDueDateModal] = useState(false);
   const [openSnoozeModal, setOpenSnoozeModal] = useState(false);
   const [selectedDueDate, setSelectedDueDate] = useState('');
@@ -182,6 +187,37 @@ export default function DashboardPage() {
       toast.error('Failed to snooze tasks.', { id: loadingToast });
     } finally {
       setIsBulkActing(false);
+    }
+  };
+
+  const handleStartQueue = () => {
+    if (checkedTasks.size === 0) return;
+    
+    const selectedTaskObjects: Task[] = [];
+    const allTasks = [
+      ...(data?.today_tasks || []),
+      ...(data?.in_progress_tasks || []),
+      ...(data?.upcoming_tasks || []),
+      ...(data?.completed_tasks || [])
+    ];
+    
+    checkedTasks.forEach(id => {
+      const task = allTasks.find(t => t.id === id);
+      if (task) selectedTaskObjects.push(task);
+    });
+
+    if (selectedTaskObjects.length > 0) {
+      setQueueTasks(selectedTaskObjects);
+      setIsQueueOpen(true);
+    }
+  };
+
+  const handleQueueMarkComplete = async (taskId: string) => {
+    try {
+      await api.patch(`/tasks/${taskId}/status`, { status: 'COMPLETED' });
+      fetchDashboardData();
+    } catch {
+      toast.error('Failed to mark task complete');
     }
   };
 
@@ -645,6 +681,8 @@ export default function DashboardPage() {
                                   }`}>
                                   {task.priority}
                                 </span>
+                                {/* Teams and Zoom buttons removed as requested */}
+                                {/* Mail button removed as requested */}
                                 <button
                                   onClick={(e) => { e.stopPropagation(); router.push(`/tasks/${task.id}`); }}
                                   className="text-[11px] font-semibold text-gray-700 border border-gray-300 rounded-lg px-3 py-1 hover:bg-gray-50 transition-colors whitespace-nowrap"
@@ -773,6 +811,15 @@ export default function DashboardPage() {
 
           <div className="flex items-center gap-2">
             <button
+              onClick={handleStartQueue}
+              disabled={isBulkActing}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-bold text-white bg-blue-600 hover:bg-blue-700 border border-blue-700 rounded-lg transition-colors disabled:opacity-55"
+            >
+              <span>▶</span>
+              Start Queue
+            </button>
+
+            <button
               onClick={handleBulkComplete}
               disabled={isBulkActing}
               className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors disabled:opacity-55"
@@ -878,6 +925,16 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+      {/* ── Queue Overlay ── */}
+      <QueueOverlay
+        isOpen={isQueueOpen}
+        tasks={queueTasks}
+        onClose={() => {
+          setIsQueueOpen(false);
+          setCheckedTasks(new Set());
+        }}
+        onMarkComplete={handleQueueMarkComplete}
+      />
     </div>
   );
 }

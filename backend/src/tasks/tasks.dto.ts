@@ -41,6 +41,14 @@ export class CreateTaskDto {
 
   @IsOptional()
   @IsString()
+  sf_who_name?: string;
+
+  @IsOptional()
+  @IsString()
+  salesforce_what_id?: string;
+
+  @IsOptional()
+  @IsString()
   linkedin_url?: string;
 
   @IsOptional()
@@ -108,6 +116,14 @@ export class UpdateTaskDto {
   @IsOptional()
   @IsString()
   company_name?: string;
+
+  @IsOptional()
+  @IsString()
+  sf_who_name?: string;
+
+  @IsOptional()
+  @IsString()
+  salesforce_what_id?: string;
 
   @IsOptional()
   @IsString()

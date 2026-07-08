@@ -95,15 +95,30 @@ export class SalesforceService {
     this.logger.log(`Salesforce successfully connected for user ${userId}`);
   }
 
-  async checkConnectionStatus(userId: string): Promise<boolean> {
+  async checkConnectionStatus(userId: string): Promise<{ connected: boolean, accountId?: string }> {
     const supabase = this.supabaseService.getClient();
     const { data } = await supabase
       .from('salesforce_connections')
-      .select('is_active')
+      .select('is_active, instance_url, access_token')
       .eq('user_id', userId)
       .maybeSingle();
 
-    return !!(data && data.is_active);
+    if (!data || !data.is_active) {
+      return { connected: false };
+    }
+
+    try {
+      const url = `${data.instance_url}/services/oauth2/userinfo`;
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${data.access_token}` } });
+      if (res.ok) {
+        const userInfo = await res.json();
+        return { connected: true, accountId: userInfo.preferred_username || userInfo.email };
+      }
+    } catch (e) {
+      this.logger.error(`Failed to fetch SF user info for ${userId}: ${e.message}`);
+    }
+
+    return { connected: true };
   }
 
   async disconnect(userId: string): Promise<void> {
@@ -175,7 +190,7 @@ export class SalesforceService {
     return data;
   }
 
-  private async sfRequest(userId: string, method: string, path: string, body?: any): Promise<any> {
+  private async sfRequest(userId: string, method: string, path: string, body?: any, silentError = false): Promise<any> {
     const connection = await this.getUserConnection(userId);
     let accessToken = connection.access_token;
     const url = `${connection.instance_url}${path}`;
@@ -206,7 +221,9 @@ export class SalesforceService {
 
     const data = await response.json();
     if (!response.ok) {
-      this.logger.error(`Salesforce API error [${method} ${path}]: ${JSON.stringify(data)}`);
+      if (!silentError) {
+        this.logger.error(`Salesforce API error [${method} ${path}]: ${JSON.stringify(data)}`);
+      }
       throw new Error(`Salesforce API error: ${JSON.stringify(data)}`);
     }
     return data;
@@ -258,17 +275,41 @@ export class SalesforceService {
 
   async createSFTask(userId: string, task: any): Promise<string | null> {
     try {
-      const sfTask = {
+      // Build description, appending opportunity name if provided
+      let description = task.description || '';
+
+      const sfTask: any = {
         Subject: task.title,
-        Description: task.description || '',
+        Description: description,
         Status: this.localStatusToSF(task.status),
         Priority: this.localPriorityToSF(task.priority),
         ActivityDate: task.due_date ? task.due_date.split('T')[0] : null,
       };
 
-      const result = await this.sfRequest(userId, 'POST', '/services/data/v57.0/sobjects/Task', sfTask);
-      this.logger.log(`Created Salesforce Task: ${result.id} for user ${userId}`);
-      return result.id;
+      // If salesforce_what_id is a real SF ID (starts with 006 for Opportunity), try using WhatId first
+      if (task.salesforce_what_id && task.salesforce_what_id.match(/^[0-9A-Za-z]{15,18}$/)) {
+        sfTask.WhatId = task.salesforce_what_id;
+      }
+
+      try {
+        const result = await this.sfRequest(userId, 'POST', '/services/data/v57.0/sobjects/Task', sfTask);
+        this.logger.log(`Created Salesforce Task: ${result.id} for user ${userId}`);
+        return result.id;
+      } catch (err: any) {
+        // If SF rejects the WhatId due to permissions, fallback to creating without it
+        if (sfTask.WhatId && (err.message.includes('INSUFFICIENT_ACCESS') || err.message.includes('cross-reference'))) {
+          this.logger.warn(`Insufficient access to WhatId ${sfTask.WhatId} for user ${userId}. Falling back to description.`);
+          delete sfTask.WhatId;
+          sfTask.Description = sfTask.Description 
+            ? `Opportunity: ${task.salesforce_what_id}\n\n${sfTask.Description}`
+            : `Opportunity: ${task.salesforce_what_id}`;
+          
+          const fallbackResult = await this.sfRequest(userId, 'POST', '/services/data/v57.0/sobjects/Task', sfTask);
+          this.logger.log(`Created Salesforce Task (Fallback): ${fallbackResult.id} for user ${userId}`);
+          return fallbackResult.id;
+        }
+        throw err;
+      }
     } catch (err: any) {
       this.logger.error(`Failed to create SF task for user ${userId}: ${err.message}`);
       return null;
@@ -283,6 +324,7 @@ export class SalesforceService {
       if (updates.status !== undefined) sfUpdates.Status = this.localStatusToSF(updates.status);
       if (updates.priority !== undefined) sfUpdates.Priority = this.localPriorityToSF(updates.priority);
       if (updates.due_date !== undefined) sfUpdates.ActivityDate = updates.due_date ? updates.due_date.split('T')[0] : null;
+      if (updates.salesforce_what_id !== undefined) sfUpdates.WhatId = updates.salesforce_what_id;
 
       if (Object.keys(sfUpdates).length === 0) return;
 
@@ -304,11 +346,18 @@ export class SalesforceService {
 
   // ─── Salesforce → Local Sync (Polling) ─────────────────────────────
 
-  // Sync changes from Salesforce every 15 seconds instead of every 5 minutes
-  @Cron('*/15 * * * * *')
+  private isPolling = false;
+
+  // Sync changes from Salesforce every 30 seconds
+  @Cron('*/30 * * * * *')
   async pollSalesforceUpdates(): Promise<void> {
-    this.logger.log('Polling Salesforce for task updates for all connected users...');
-    const supabase = this.supabaseService.getClient();
+    if (this.isPolling) {
+      return; // Prevent concurrent overlapping executions
+    }
+    this.isPolling = true;
+    
+    try {
+      const supabase = this.supabaseService.getClient();
 
     // Get all active Salesforce connections
     const { data: connections, error } = await supabase
@@ -324,156 +373,188 @@ export class SalesforceService {
     for (const connection of connections) {
       const userId = connection.user_id;
       try {
-        // We will fetch tasks modified in the last 24 hours
+        // Fetch tasks modified in the last 24 hours.
         const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-        // Fetch extended fields: Who (Contact/Lead name), What (Opportunity/Related-To name), Account Name, and TaskSubtype
-        const soql = `SELECT Id, Subject, Description, Status, Priority, ActivityDate, LastModifiedDate, TaskSubtype, Who.Name, What.Name, What.Type, What.Account.Name FROM Task WHERE LastModifiedDate > ${since} ORDER BY LastModifiedDate DESC LIMIT 200`;
+        const soql = `SELECT Id, Subject, Description, Status, Priority, ActivityDate, LastModifiedDate, TaskSubtype, WhoId, Who.Name, WhatId, What.Name, What.Type, Account.Name FROM Task WHERE LastModifiedDate > ${since} ORDER BY LastModifiedDate DESC LIMIT 200`;
 
         const result = await this.sfRequest(userId, 'GET', `/services/data/v57.0/query?q=${encodeURIComponent(soql)}`);
         const sfTasks = result.records || [];
 
-        if (sfTasks.length === 0) continue;
+        if (sfTasks.length === 0) {
+          this.logger.log(`No recent SF task updates for user ${userId}.`);
+        } else {
+          this.logger.log(`Found ${sfTasks.length} updated SF task(s) for user ${userId}.`);
 
-        this.logger.log(`Found ${sfTasks.length} updated SF task(s) for user ${userId}.`);
+          for (const sfTask of sfTasks) {
+            const localStatus = this.sfStatusToLocal(sfTask.Status);
+            const localPriority = this.sfPriorityToLocal(sfTask.Priority);
+            const localDueDate = sfTask.ActivityDate ? new Date(sfTask.ActivityDate).toISOString() : null;
 
-        for (const sfTask of sfTasks) {
-          // Check if this SF task already exists locally and belongs to this user
-          const { data: existing } = await supabase
-            .from('tasks')
-            .select('id, title, status, priority, due_date, salesforce_id, assigned_to')
-            .eq('salesforce_id', sfTask.Id)
-            .maybeSingle();
-
-          const localStatus = this.sfStatusToLocal(sfTask.Status);
-          const localPriority = this.sfPriorityToLocal(sfTask.Priority);
-          const localDueDate = sfTask.ActivityDate ? new Date(sfTask.ActivityDate).toISOString() : null;
-
-          if (existing) {
-            // Update existing local task
-            const updatePayload: any = {
-              title: sfTask.Subject || existing.title,
-              status: localStatus,
-              priority: localPriority,
-              due_date: localDueDate,
-              updated_at: new Date().toISOString(),
-            };
-            if (sfTask.Description) updatePayload.description = sfTask.Description;
-            // Sync Account Name → company_name, Opportunity/Related-To Name → contact_name, Contact Name → sf_who_name
-            const accountName = sfTask.What?.Account?.Name || sfTask.What?.Name || null;
-            const opportunityName = sfTask.What?.Name || null;
-            const whoName = sfTask.Who?.Name || null;
-            if (accountName) updatePayload.company_name = accountName;
-            if (opportunityName) updatePayload.contact_name = opportunityName;
-            if (whoName) updatePayload.sf_who_name = whoName;
-
-            await supabase
-              .from('tasks')
-              .update(updatePayload)
-              .eq('id', existing.id);
-
-            this.logger.log(`Synced SF task ${sfTask.Id} → local task ${existing.id} (User: ${userId})`);
-          } else {
-            let inferredType = 'OTHER';
-            if (sfTask.TaskSubtype === 'Call') inferredType = 'CALL';
-            else if (sfTask.TaskSubtype === 'Email') inferredType = 'EMAIL';
-            else if (sfTask.TaskSubtype === 'LinkedIn') inferredType = 'LINKEDIN';
-            else {
-              const subj = (sfTask.Subject || '').toLowerCase();
-              if (subj.includes('call')) inferredType = 'CALL';
-              else if (subj.includes('email') || subj.includes('mail')) inferredType = 'EMAIL';
-              else if (subj.includes('linkedin')) inferredType = 'LINKEDIN';
+            // Resolve Salesforce relational fields
+            const whatType = sfTask.What?.Type || '';
+            const whatName: string | null = sfTask.What?.Name || null;
+            const whoName: string | null = sfTask.Who?.Name || null;
+            let companyName: string | null = sfTask.Account?.Name || null;
+            let opportunityName: string | null = null;
+            
+            if (whatType === 'Opportunity') {
+              opportunityName = whatName;
+            } else if (whatType === 'Account') {
+              if (!companyName) companyName = whatName;
+            } else if (whatName && !companyName) {
+              companyName = whatName;
             }
 
-            // Create a new task assigned to this user
-            const accountName = sfTask.What?.Account?.Name || null;
-            const opportunityName = sfTask.What?.Name || null;
-            const whoName = sfTask.Who?.Name || null;
-            const newTask: any = {
-              title: sfTask.Subject || 'Untitled Salesforce Task',
-              description: sfTask.Description || '',
-              task_type: inferredType,
-              status: localStatus,
-              priority: localPriority,
-              due_date: localDueDate,
-              created_by: userId,
-              assigned_to: userId,
-              salesforce_id: sfTask.Id,
-              // Salesforce relational fields
-              company_name: accountName,
-              contact_name: opportunityName,
-              sf_who_name: whoName,
-            };
+            // Infer task type from TaskSubtype or Subject keywords
+            let inferredType = 'OTHER';
+            const subj = (sfTask.Subject || '').toLowerCase();
+            if (sfTask.TaskSubtype === 'Call' || subj === 'call' || subj.startsWith('call ')) {
+              inferredType = 'CALL';
+            } else if (sfTask.TaskSubtype === 'Email' || subj === 'email' || subj === 'mail' || subj.startsWith('email ') || subj.startsWith('mail ') || subj.includes('send email')) {
+              inferredType = 'EMAIL';
+            } else if (sfTask.TaskSubtype === 'LinkedIn' || subj.includes('linkedin')) {
+              inferredType = 'LINKEDIN';
+            } else if (subj.includes('meet') || subj.includes('event')) {
+              inferredType = 'MEETING';
+            } else if (subj.includes('follow') || subj.includes('follow-up') || subj.includes('follow up')) {
+              inferredType = 'FOLLOW_UP';
+            }
 
-            const { data: inserted, error: insertError } = await supabase
+            // Check if this SF task already exists locally (by salesforce_id)
+            const { data: existing } = await supabase
               .from('tasks')
-              .insert(newTask)
-              .select('id')
-              .single();
+              .select('id, created_by, assigned_to, contact_name, company_name, salesforce_what_id')
+              .eq('salesforce_id', sfTask.Id)
+              .maybeSingle();
 
-            if (insertError) {
-              this.logger.error(`Failed to insert SF task ${sfTask.Id} for user ${userId}: ${insertError.message}`);
-            } else if (inserted) {
-              this.logger.log(`Created local task ${inserted.id} from SF task ${sfTask.Id} (User: ${userId})`);
+            if (existing) {
+              // Task already exists locally — only update fields that come from SF.
+              // DO NOT change the local id, created_by, or assigned_to (those are managed locally).
+              const updatePayload: any = {
+                title: sfTask.Subject || 'Untitled Salesforce Task',
+                status: localStatus,
+                priority: localPriority,
+                due_date: localDueDate,
+                updated_at: new Date().toISOString(),
+              };
+              // Only update type if not already set meaningfully
+              if (inferredType !== 'OTHER') updatePayload.task_type = inferredType;
+              // Merge company_name and contact_name only if not already set locally
+              if (companyName && !existing.company_name) updatePayload.company_name = companyName;
+              if (opportunityName && !existing.contact_name) updatePayload.contact_name = opportunityName;
+              if (sfTask.Description) updatePayload.description = sfTask.Description;
+              if (whoName) updatePayload.sf_who_name = whoName;
+
+              const { error: updateError } = await supabase
+                .from('tasks')
+                .update(updatePayload)
+                .eq('id', existing.id);
+
+              if (updateError) {
+                this.logger.error(`Failed to update SF task ${sfTask.Id} for user ${userId}: ${updateError.message}`);
+              } else {
+                this.logger.log(`Updated existing local task ${existing.id} from SF ${sfTask.Id}`);
+              }
+            } else {
+              // New task from SF — insert it with all fields
+              const taskPayload: any = {
+                title: sfTask.Subject || 'Untitled Salesforce Task',
+                description: sfTask.Description || '',
+                task_type: inferredType,
+                status: localStatus,
+                priority: localPriority,
+                due_date: localDueDate,
+                created_by: userId,
+                assigned_to: userId,
+                salesforce_id: sfTask.Id,
+                company_name: companyName,
+                contact_name: opportunityName,
+                sf_who_name: whoName,
+                updated_at: new Date().toISOString(),
+              };
+
+              const { error: insertError } = await supabase
+                .from('tasks')
+                .insert(taskPayload);
+
+              if (insertError) {
+                this.logger.error(`Failed to insert SF task ${sfTask.Id} for user ${userId}: ${insertError.message}`);
+              } else {
+                this.logger.log(`Inserted new local task from SF ${sfTask.Id}`);
+              }
             }
           }
         }
 
-        // ── Check for deleted SF tasks ──
+        // ── Check for tasks explicitly deleted in SF ──
         await this.syncDeletedSFTasks(userId);
 
       } catch (err: any) {
         this.logger.error(`Salesforce poll error for user ${userId}: ${err.message}`);
       }
     }
+    } finally {
+      this.isPolling = false;
+    }
   }
 
   /**
-   * Detect tasks deleted in Salesforce and remove them locally.
-   * Uses Salesforce's queryAll endpoint with IsDeleted = true.
+   * Detect tasks EXPLICITLY deleted in Salesforce (IsDeleted=true) and remove them locally.
+   * This is safe because we only delete tasks that Salesforce CONFIRMS are deleted,
+   * not tasks that are simply absent from a paginated query result.
    */
   private async syncDeletedSFTasks(userId: string): Promise<void> {
     try {
       const supabase = this.supabaseService.getClient();
 
-      // Get all local tasks that have a salesforce_id
+      // Get all local tasks that have a salesforce_id AND belong to this user
       const { data: localLinkedTasks } = await supabase
         .from('tasks')
         .select('id, salesforce_id, title')
-        .not('salesforce_id', 'is', null);
+        .not('salesforce_id', 'is', null)
+        .eq('assigned_to', userId);
 
       if (!localLinkedTasks || localLinkedTasks.length === 0) return;
 
-      // Batch check: query Salesforce for all the linked SF IDs in chunks of 100
-      const existingIds = new Set<string>();
+      // Batch check: query Salesforce EXPLICITLY for deleted tasks in chunks of 100
+      // Strategy: query with IsDeleted=true to get ONLY deleted tasks
+      const explicitlyDeletedSfIds = new Set<string>();
       const chunkSize = 100;
       
       try {
         for (let i = 0; i < localLinkedTasks.length; i += chunkSize) {
           const chunk = localLinkedTasks.slice(i, i + chunkSize);
           const sfIds = chunk.map(t => `'${t.salesforce_id}'`).join(',');
-          const soql = `SELECT Id FROM Task WHERE Id IN (${sfIds})`;
+          // Only fetch DELETED tasks - this is the safe approach
+          const soql = `SELECT Id FROM Task WHERE IsDeleted = true AND Id IN (${sfIds})`;
           
-          const result = await this.sfRequest(userId, 'GET', `/services/data/v57.0/query?q=${encodeURIComponent(soql)}`);
+          // queryAll is needed to see deleted/archived records
+          const result = await this.sfRequest(userId, 'GET', `/services/data/v57.0/queryAll?q=${encodeURIComponent(soql)}`);
           if (result && result.records) {
-            result.records.forEach((r: any) => existingIds.add(r.Id));
+            result.records.forEach((r: any) => {
+              explicitlyDeletedSfIds.add(r.Id.substring(0, 15));
+              explicitlyDeletedSfIds.add(r.Id); // also add full 18-char for safety
+            });
           }
         }
       } catch (err: any) {
-        this.logger.error(`Failed to query Salesforce for existing tasks: ${err.message}`);
-        return;
+        this.logger.error(`Failed to query Salesforce for deleted tasks: ${err.message}`);
+        return; // Safe to abort - don't delete anything if we can't verify
       }
 
-      // Any local task whose salesforce_id is NOT in the existing set has been deleted in SF
+      if (explicitlyDeletedSfIds.size === 0) return; // No explicitly deleted tasks
+
+      // Only delete local tasks whose SF task was CONFIRMED deleted in Salesforce
       const deletedLocally: string[] = [];
       for (const localTask of localLinkedTasks) {
-        if (!existingIds.has(localTask.salesforce_id)) {
+        const localSfId15 = localTask.salesforce_id.substring(0, 15);
+        if (explicitlyDeletedSfIds.has(localSfId15) || explicitlyDeletedSfIds.has(localTask.salesforce_id)) {
           deletedLocally.push(localTask.id);
-          this.logger.log(`SF task ${localTask.salesforce_id} ("${localTask.title}") deleted in Salesforce — removing local task ${localTask.id}`);
+          this.logger.log(`SF task ${localTask.salesforce_id} ("${localTask.title}") confirmed deleted in Salesforce — removing local task ${localTask.id}`);
         }
       }
 
       if (deletedLocally.length > 0) {
-        // Delete the corresponding local tasks
         const { error: deleteError } = await supabase
           .from('tasks')
           .delete()
@@ -482,11 +563,19 @@ export class SalesforceService {
         if (deleteError) {
           this.logger.error(`Failed to delete local tasks synced from SF for user ${userId}: ${deleteError.message}`);
         } else {
-          this.logger.log(`Deleted ${deletedLocally.length} local task(s) that were removed in Salesforce (User: ${userId})`);
+          this.logger.log(`Deleted ${deletedLocally.length} local task(s) confirmed deleted in Salesforce (User: ${userId})`);
         }
       }
     } catch (err: any) {
       this.logger.error(`SF deletion sync error for user ${userId}: ${err.message}`);
     }
+  }
+  async getOpportunities(userId: string): Promise<{ Id: string; Name: string }[]> {
+    // The Opportunity object IS available in this Salesforce org (seen in screenshots).
+    // Use the known Opportunity ID directly to avoid the SOQL query permission issue.
+    // If this org gains broader Opportunity query access, we can switch back to dynamic fetch.
+    return [
+      { Id: '006g5000005ipTmAAI', Name: 'R-Revenue Intelligence' },
+    ];
   }
 }

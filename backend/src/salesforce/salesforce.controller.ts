@@ -24,8 +24,8 @@ export class SalesforceController {
   @Get('status')
   async getStatus(@CurrentUser() user: { sub: string }) {
     const userId = user.sub;
-    const isConnected = await this.salesforceService.checkConnectionStatus(userId);
-    return { connected: isConnected };
+    const status = await this.salesforceService.checkConnectionStatus(userId);
+    return status;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -68,5 +68,13 @@ export class SalesforceController {
       console.error('Salesforce OAuth Callback Error:', error);
       return res.redirect(`${frontendUrl}/profile?salesforce=error&message=${encodeURIComponent(error.message)}`);
     }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('opportunities')
+  async getOpportunities(@CurrentUser() user: { sub: string }) {
+    const userId = user.sub;
+    const opportunities = await this.salesforceService.getOpportunities(userId);
+    return { opportunities };
   }
 }

@@ -39,17 +39,21 @@ export default function CreateTaskPage() {
     meeting_link: '',
     location: '',
     note: '',
+    salesforce_what_id: '',
   });
+
+  const [opportunities, setOpportunities] = useState<{ Id: string; Name: string }[]>([]);
+  const [loadingOpportunities, setLoadingOpportunities] = useState(true);
 
   useEffect(() => {
     if (!user) return; // wait until auth loads
 
-    // REPs don't need the user list — tasks auto-assign to themselves
-    if (user.role === 'REP') {
-      setUsersLoading(false);
-      return;
-    }
     const fetchUsers = async () => {
+      // REPs don't need the user list — tasks auto-assign to themselves
+      if (user.role === 'REP') {
+        setUsersLoading(false);
+        return;
+      }
       try {
         if (user.role === 'MANAGER') {
           const { data } = await api.get('/teams/my-team');
@@ -64,7 +68,22 @@ export default function CreateTaskPage() {
         setUsersLoading(false);
       }
     };
+
+    const fetchOpportunities = async () => {
+      try {
+        const { data } = await api.get('/salesforce/opportunities');
+        if (data?.opportunities) {
+          setOpportunities(data.opportunities);
+        }
+      } catch {
+        // silently ignore
+      } finally {
+        setLoadingOpportunities(false);
+      }
+    };
+
     fetchUsers();
+    fetchOpportunities();
   }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -101,6 +120,7 @@ export default function CreateTaskPage() {
         meeting_link: form.meeting_link || undefined,
         location: form.location || undefined,
         note: form.note || undefined,
+        salesforce_what_id: form.salesforce_what_id || undefined,
       };
 
       await api.post('/tasks', payload);
@@ -249,6 +269,29 @@ export default function CreateTaskPage() {
 
         <div className="border-t border-gray-200 pt-4">
           <h3 className="mb-3 text-sm font-semibold text-gray-700">Additional Details</h3>
+          
+          <div className="mb-4">
+            <label className="mb-1 block text-sm font-medium text-gray-700">Salesforce Opportunity</label>
+            {!loadingOpportunities ? (
+              <select
+                name="salesforce_what_id"
+                value={form.salesforce_what_id}
+                onChange={handleChange}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+              >
+                <option value="">-- None --</option>
+                {opportunities.map((opp) => (
+                  <option key={opp.Id} value={opp.Id}>{opp.Name}</option>
+                ))}
+              </select>
+            ) : (
+              <div className="flex items-center gap-2 py-2">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+                <span className="text-xs text-gray-400">Loading Opportunities...</span>
+              </div>
+            )}
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Company Name</label>

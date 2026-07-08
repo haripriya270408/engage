@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import QueueOverlay from '@/components/queue-overlay';
 
 interface UserRef { id: string; first_name: string; last_name: string; email?: string }
 
@@ -147,6 +148,127 @@ export default function ManagerDashboard() {
   const [sortBy, setSortBy] = useState<'due_date' | 'priority'>('due_date');
   const [repFilter, setRepFilter] = useState<string>('all');
   const [reassignTask, setReassignTask] = useState<Task | null>(null);
+
+  const [isBulkActing, setIsBulkActing] = useState(false);
+  const [isQueueOpen, setIsQueueOpen] = useState(false);
+  const [queueTasks, setQueueTasks] = useState<Task[]>([]);
+  const [openDueDateModal, setOpenDueDateModal] = useState(false);
+  const [openSnoozeModal, setOpenSnoozeModal] = useState(false);
+  const [selectedDueDate, setSelectedDueDate] = useState('');
+
+  const removeSnoozedIds = (idsToRemove: string[]) => {
+    try {
+      const current = JSON.parse(localStorage.getItem('snoozed_task_ids') || '[]');
+      const filtered = current.filter((id: string) => !idsToRemove.includes(id));
+      localStorage.setItem('snoozed_task_ids', JSON.stringify(filtered));
+    } catch { }
+  };
+
+  const handleBulkComplete = async () => {
+    setIsBulkActing(true);
+    const loadingToast = toast.loading('Marking tasks complete...');
+    try {
+      const idsArray = Array.from(checkedTasks);
+      await Promise.all(
+        idsArray.map((taskId) =>
+          api.patch(`/tasks/${taskId}`, { status: 'COMPLETED' })
+        )
+      );
+      removeSnoozedIds(idsArray);
+      toast.success(`Successfully marked ${checkedTasks.size} task(s) as complete!`, { id: loadingToast });
+      setCheckedTasks(new Set());
+      fetchDashboardData();
+    } catch {
+      toast.error('Failed to complete some tasks.', { id: loadingToast });
+    } finally {
+      setIsBulkActing(false);
+    }
+  };
+
+  const handleBulkUpdateDueDate = async (dueDateStr: string) => {
+    if (!dueDateStr) return;
+    setIsBulkActing(true);
+    const loadingToast = toast.loading('Updating due dates...');
+    try {
+      const idsArray = Array.from(checkedTasks);
+      await Promise.all(
+        idsArray.map((taskId) =>
+          api.patch(`/tasks/${taskId}`, { due_date: new Date(dueDateStr).toISOString() })
+        )
+      );
+      removeSnoozedIds(idsArray);
+      toast.success(`Updated due date for ${checkedTasks.size} task(s)!`, { id: loadingToast });
+      setCheckedTasks(new Set());
+      setOpenDueDateModal(false);
+      fetchDashboardData();
+    } catch {
+      toast.error('Failed to update due dates.', { id: loadingToast });
+    } finally {
+      setIsBulkActing(false);
+    }
+  };
+
+  const handleBulkSnooze = async (days: number) => {
+    setIsBulkActing(true);
+    const loadingToast = toast.loading('Snoozing tasks...');
+    try {
+      const newDueDate = new Date();
+      newDueDate.setDate(newDueDate.getDate() + days);
+      const idsArray = Array.from(checkedTasks);
+      await Promise.all(
+        idsArray.map((taskId) =>
+          api.patch(`/tasks/${taskId}`, { due_date: newDueDate.toISOString() })
+        )
+      );
+
+      // Save to localStorage
+      try {
+        const snoozedIds = JSON.parse(localStorage.getItem('snoozed_task_ids') || '[]');
+        const newSnoozedIds = Array.from(new Set([...snoozedIds, ...idsArray]));
+        localStorage.setItem('snoozed_task_ids', JSON.stringify(newSnoozedIds));
+      } catch { }
+
+      toast.success(`Snoozed ${checkedTasks.size} task(s)!`, { id: loadingToast });
+      setCheckedTasks(new Set());
+      setOpenSnoozeModal(false);
+      fetchDashboardData();
+    } catch {
+      toast.error('Failed to snooze tasks.', { id: loadingToast });
+    } finally {
+      setIsBulkActing(false);
+    }
+  };
+
+  const handleStartQueue = () => {
+    if (checkedTasks.size === 0) return;
+    
+    const selectedTaskObjects: Task[] = [];
+    const allTasks = [
+      ...(data?.today_tasks || []),
+      ...(data?.in_progress_tasks || []),
+      ...(data?.upcoming_tasks || []),
+      ...(data?.completed_tasks || [])
+    ];
+    
+    checkedTasks.forEach(id => {
+      const task = allTasks.find(t => t.id === id);
+      if (task) selectedTaskObjects.push(task);
+    });
+
+    if (selectedTaskObjects.length > 0) {
+      setQueueTasks(selectedTaskObjects);
+      setIsQueueOpen(true);
+    }
+  };
+
+  const handleQueueMarkComplete = async (taskId: string) => {
+    try {
+      await api.patch(`/tasks/${taskId}/status`, { status: 'COMPLETED' });
+      fetchDashboardData();
+    } catch {
+      toast.error('Failed to mark task complete');
+    }
+  };
 
   useEffect(() => {
     if (!loading && !user) { router.push('/login'); return; }
@@ -490,20 +612,20 @@ export default function ManagerDashboard() {
                           <span className="bg-gray-100 text-gray-400 rounded-full px-1.5 py-0.5 text-[10px] font-semibold">{group.tasks.length}</span>
                         </div>
                       )}
-                      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden divide-y divide-gray-100">
+                      <div className="flex flex-col gap-3">
                         {group.tasks.map((task) => {
                           const isHighPriority = task.priority === 'HIGH' || task.priority === 'URGENT';
                           const isChecked = checkedTasks.has(task.id);
                           const accentColor = task.priority === 'URGENT' ? '#ef4444'
                             : task.priority === 'HIGH' ? '#f97316'
                             : task.priority === 'MEDIUM' ? '#3b82f6'
-                            : '#9ca3af';
+                            : '#ef4444';
 
                           return (
                             <div
                               key={task.id}
-                              className="flex items-center gap-3 px-4 py-3.5 hover:bg-slate-50 transition-colors relative"
-                              style={{ borderLeft: `3px solid ${isHighPriority ? accentColor : 'transparent'}` }}
+                              className="flex items-center gap-3 px-4 py-3.5 bg-white rounded-xl border border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all relative overflow-hidden"
+                              style={{ borderLeft: `4px solid ${accentColor}` }}
                             >
                               {/* Checkbox */}
                               <div className="flex-shrink-0" onClick={(e) => e.stopPropagation()}>
@@ -588,6 +710,8 @@ export default function ManagerDashboard() {
                                 >
                                   Reassign
                                 </button>
+                                  {/* Teams and Zoom buttons removed as requested */}
+                                  {/* Mail button removed as requested */}
                                 <button
                                   onClick={(e) => { e.stopPropagation(); handleTakeAction(task); }}
                                   className="text-[11px] font-semibold text-gray-700 border border-gray-300 rounded-lg px-3 py-1 hover:bg-gray-50 transition-colors whitespace-nowrap"
@@ -705,6 +829,152 @@ export default function ManagerDashboard() {
           onDone={() => { setReassignTask(null); fetchDashboardData(); }}
         />
       )}
+      {/* ── Bottom Bulk Action Bar ── */}
+      {checkedTasks.size > 0 && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 shadow-xl rounded-full px-6 py-3 flex items-center justify-between gap-8 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="flex items-center gap-3 border-r border-gray-150 pr-6">
+            <button
+              onClick={() => setCheckedTasks(new Set())}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+              title="Clear selection"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+            <span className="text-[13px] font-semibold text-gray-800">
+              {checkedTasks.size} selected
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleStartQueue}
+              disabled={isBulkActing}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-bold text-white bg-blue-600 hover:bg-blue-700 border border-blue-700 rounded-lg transition-colors disabled:opacity-55"
+            >
+              <span>▶</span>
+              Start Queue
+            </button>
+
+            <button
+              onClick={handleBulkComplete}
+              disabled={isBulkActing}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors disabled:opacity-55"
+            >
+              <span>⊙</span>
+              Mark Complete
+            </button>
+
+            <button
+              onClick={() => setOpenDueDateModal(true)}
+              disabled={isBulkActing}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors disabled:opacity-55"
+            >
+              <span>📅</span>
+              Update Due Date
+            </button>
+
+            <button
+              onClick={() => setOpenSnoozeModal(true)}
+              disabled={isBulkActing}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors disabled:opacity-55"
+            >
+              <span>🕒</span>
+              Snooze
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Due Date Modal ── */}
+      {openDueDateModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50 animate-in fade-in duration-200">
+          <div className="bg-white rounded-xl shadow-xl border border-gray-150 p-5 w-full max-w-sm animate-in scale-in duration-200">
+            <h3 className="text-[14px] font-bold text-gray-800 mb-3 flex items-center gap-1.5">
+              <span>📅</span> Update Due Date
+            </h3>
+            <p className="text-[12px] text-gray-500 mb-4">
+              Choose a new due date for the {checkedTasks.size} selected task(s).
+            </p>
+            <input
+              type="date"
+              value={selectedDueDate}
+              onChange={(e) => setSelectedDueDate(e.target.value)}
+              className="w-full border border-gray-250 rounded-lg p-2 text-[13px] outline-none focus:ring-1 focus:ring-blue-500 mb-4 text-gray-700 font-medium"
+            />
+            <div className="flex justify-end gap-2 text-[12px] font-semibold">
+              <button
+                onClick={() => setOpenDueDateModal(false)}
+                className="px-3 py-1.5 text-gray-600 hover:bg-gray-50 border border-gray-250 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleBulkUpdateDueDate(selectedDueDate)}
+                disabled={!selectedDueDate || isBulkActing}
+                className="px-3 py-1.5 bg-[#1e293b] text-white hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-50"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Snooze Modal ── */}
+      {openSnoozeModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50 animate-in fade-in duration-200">
+          <div className="bg-white rounded-xl shadow-xl border border-gray-150 p-5 w-full max-w-xs animate-in scale-in duration-200">
+            <h3 className="text-[14px] font-bold text-gray-800 mb-3 flex items-center gap-1.5">
+              <span>🕒</span> Snooze Tasks
+            </h3>
+            <p className="text-[12px] text-gray-500 mb-4">
+              Select snooze duration for the {checkedTasks.size} selected task(s).
+            </p>
+            <div className="space-y-2 mb-4 text-[13px]">
+              <button
+                onClick={() => handleBulkSnooze(1)}
+                className="w-full text-left px-3 py-2 text-gray-700 hover:bg-slate-50 border border-gray-100 rounded-lg font-medium transition-colors"
+              >
+                🌅 Snooze until Tomorrow
+              </button>
+              <button
+                onClick={() => handleBulkSnooze(3)}
+                className="w-full text-left px-3 py-2 text-gray-700 hover:bg-slate-50 border border-gray-100 rounded-lg font-medium transition-colors"
+              >
+                📅 Snooze for 3 days
+              </button>
+              <button
+                onClick={() => handleBulkSnooze(7)}
+                className="w-full text-left px-3 py-2 text-gray-700 hover:bg-slate-50 border border-gray-100 rounded-lg font-medium transition-colors"
+              >
+                🗓️ Snooze for 1 Week
+              </button>
+            </div>
+            <div className="flex justify-end text-[12px] font-semibold">
+              <button
+                onClick={() => setOpenSnoozeModal(false)}
+                className="px-3 py-1.5 text-gray-600 hover:bg-gray-50 border border-gray-250 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Queue Overlay ── */}
+      <QueueOverlay
+        isOpen={isQueueOpen}
+        tasks={queueTasks}
+        onClose={() => {
+          setIsQueueOpen(false);
+          setCheckedTasks(new Set());
+        }}
+        onMarkComplete={handleQueueMarkComplete}
+      />
     </div>
   );
 }
